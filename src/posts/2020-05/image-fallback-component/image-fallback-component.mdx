@@ -1,0 +1,41 @@
+---
+title: "Creating a image component with a fallback url in React"
+author: "Patrick Passarella"
+date: "5th May, 2020"
+subtitle: "And testing it with React Testing Library"
+published: true
+---
+
+I am sure that you already found a website with an image not loading, maybe you don't really cared that much, but a lot of users care and find it very irritating. It's something incredible simple to solve, that adds a solid value to your application/website.
+
+To start it off, let's build a simple Image React component with Typescript, that does not have anything really important in it.
+
+```jsx
+interface Props {
+  url: string;
+};
+
+const Image: React.FC<Props> = ({url, ...rest}) => (
+  <img src={url} {...rest} />
+);
+
+```
+
+As you can see, it's just a component that returns a `img` tag, now to add the fallback url we can use the property `onError` that the `img` tag has and almost no one knows about it.
+
+```jsx
+interface Props {
+  url: string;
+  fallback?: string;
+};
+
+const handleImageError = fallback => event => event.target.src = fallback;
+
+const Image: React.FC<Props> = ({url, fallback, ...rest}) => (
+  <img src={url} onError={handleImageError(fallback)} {...rest} />
+);
+
+```
+
+So if the main url fails, it will change the `src` from the image to the passed fallback url, which could be for example a default image. And it works! you can already try it, check the gif below on how to manually test it.
+
