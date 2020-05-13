@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Link } from 'gatsby';
 import { device } from '../utils/devices';
 
 const Roles = styled.p`
@@ -33,6 +34,20 @@ const H1 = styled.h1`
   }
 `;
 
+const Subtitle = styled(Link)`
+  font-size: 1rem;
+  font-weight: bold;
+  opacity: 0.55;
+  text-decoration: none;
+  transition: 0.15s;
+  padding-bottom: 1px;
+  border-bottom: 1px solid #8d8d8d;
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
 const BoldHeader = styled(H1)`
   font-family: 'Open Sans', 'Lato', sans-serif;
   margin-bottom: 22px;
@@ -61,6 +76,35 @@ const BlogSection = styled(Section)`
   }
 `;
 
+const ContactSection = styled(Section)`
+  height: 100vh;
+
+  @media ${device.mobileS} and (max-width: 1024px) {
+    height: 100%;
+  }
+`;
+
+const TwoWrapper = styled.div`
+  display: flex;
+  height: 100%;
+
+  @media ${device.mobileS} and (max-width: 1024px) {
+    flex-direction: column;
+  }
+
+  & .left {
+    width: 100%;
+  }
+
+  & .right {
+    width: 100%;
+
+    & div {
+      margin-bottom: 30px;
+    }
+  }
+`;
+
 const BlogWrapper = styled.div`
   display: flex;
   justify-content: space-between;
@@ -76,7 +120,6 @@ const BlogWrapper = styled.div`
 const Divisor = styled.div`
   width: 1.5px;
   background-color: #2b2b2b;
-  margin: 0 30px;
   height: 70%;
   position: absolute;
   left: 50%;
@@ -98,15 +141,49 @@ const StaticDivisor = styled.div`
   }
 `;
 
+const CenterDivisor = styled.div`
+  width: 1.5px;
+  background-color: #2b2b2b;
+  margin: auto 80px;
+  height: 75vh;
+
+  @media ${device.mobileS} and (max-width: 1024px) {
+    display: none;
+  }
+`;
+
+const SocialTitle = styled.p`
+  font-size: 0.9rem;
+  font-weight: bold;
+  margin-bottom: 7px;
+`;
+
+const Flex = styled.div`
+  @media (max-width: 1024px) {
+    display: flex;
+    flex-wrap: wrap;
+
+    & > div:nth-child(odd) {
+      margin-right: 30px;
+    }
+  }
+`;
+
 export {
   Roles,
   Section,
   H1,
+  Subtitle,
   BoldHeader,
   P,
   AboutSection,
   BlogSection,
   BlogWrapper,
   Divisor,
-  StaticDivisor
+  ContactSection,
+  TwoWrapper,
+  SocialTitle,
+  CenterDivisor,
+  StaticDivisor,
+  Flex,
 };

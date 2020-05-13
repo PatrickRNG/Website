@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Link } from 'gatsby';
 import { device } from '../../utils/devices';
 
 const MenuHeader = styled.header`
@@ -44,7 +45,7 @@ const NavItem = styled.li`
   }
 `;
 
-const MenuLink = styled.a`
+const MenuLink = styled(Link)`
   text-decoration: none;
 `;
 

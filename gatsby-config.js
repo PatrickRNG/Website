@@ -3,6 +3,13 @@ module.exports = {
     title: 'Website',
     author: 'Patrick Passarella',
     menus: ['Home', 'About', 'Blog', 'Contact'],
+    socialMedia: {
+      linkedin: "https://linkedin.com/in/patrick-passarella/",
+      twitter: "https://twitter.com/P_Passarella",
+      instagram: "https://instagram.com/patrick_passarella/",
+      github: "https://github.com/PatrickRNG",
+      email: "patrickpassarella@hotmail.com"
+    }
   },
   plugins: [
     'gatsby-plugin-react-helmet',
@@ -31,6 +38,7 @@ module.exports = {
       resolve: `gatsby-plugin-mdx`,
       options: {
         gatsbyRemarkPlugins: [
+          'gatsby-remark-copy-linked-files',
           {
             resolve: `gatsby-remark-images`,
             options: {

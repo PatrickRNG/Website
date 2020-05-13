@@ -1,4 +1,5 @@
 import React from 'react';
+import { useStaticQuery, graphql } from 'gatsby';
 
 import '../styles/index.scss';
 import Layout from '../components/layout/layout';
@@ -10,13 +11,38 @@ import {
   H1,
   BoldHeader,
   P,
+  Flex,
   AboutSection,
   BlogSection,
   BlogWrapper,
-  Divisor
+  ContactSection,
+  TwoWrapper,
+  Subtitle,
+  SocialTitle,
+  CenterDivisor,
 } from '../styles/main';
 
 const IndexPage = () => {
+  const {
+    site: {
+      siteMetadata: { socialMedia },
+    },
+  } = useStaticQuery(graphql`
+    query {
+      site {
+        siteMetadata {
+          socialMedia {
+            linkedin
+            twitter
+            instagram
+            github
+            email
+          }
+        }
+      }
+    }
+  `);
+
   return (
     <Layout>
       <Section id="Home" style={{ height: 'calc(100vh - 200px)' }}>
@@ -79,7 +105,6 @@ const IndexPage = () => {
               date="March 13th, 2020"
             />
           </div>
-          <Divisor />
           <div>
             <Post
               title="Creating a server in GraphQL with Nest.js"
@@ -93,9 +118,48 @@ const IndexPage = () => {
               author="Patrick Passarella"
               date="March 13th, 2020"
             />
+            <Subtitle style={{marginLeft: '10px'}} to="/blog">See all posts</Subtitle>
           </div>
         </BlogWrapper>
       </BlogSection>
+      <ContactSection id="contact">
+        <TwoWrapper>
+          <div className="left">
+            <H1>Contact</H1>
+            <P>
+              I am interested mostly in small/medium freelance opportunities.
+              However, if you need anything else, feel free to contact me using
+              the form below.
+            </P>
+          </div>
+          <CenterDivisor />
+          <div className="right">
+            <H1>Social Media</H1>
+            <Flex>
+              <div>
+                <SocialTitle>Github</SocialTitle>
+                <Subtitle as="a" href={socialMedia.github} target="_blank">{socialMedia.github}</Subtitle>
+              </div>
+              <div>
+                <SocialTitle>Linkedin</SocialTitle>
+                <Subtitle as="a" href={`${socialMedia.linkedin}?locale=en_US`} target="_blank">{socialMedia.linkedin}</Subtitle>
+              </div>
+              <div>
+                <SocialTitle>Twitter</SocialTitle>
+                <Subtitle as="a" href={socialMedia.twitter} target="_blank">{socialMedia.twitter}</Subtitle>
+              </div>
+              <div>
+                <SocialTitle>Instagram</SocialTitle>
+                <Subtitle as="a" href={socialMedia.instagram} target="_blank">{socialMedia.instagram}</Subtitle>
+              </div>
+              <div>
+                <SocialTitle>E-mail</SocialTitle>
+                <Subtitle as="a" href={`mailto:${socialMedia.email}`} >{socialMedia.email}</Subtitle>
+              </div>
+            </Flex>
+          </div>
+        </TwoWrapper>
+      </ContactSection>
     </Layout>
   );
 };

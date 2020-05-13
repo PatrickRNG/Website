@@ -20,7 +20,7 @@ const Header = () => {
         <NavList>
           {data.site.siteMetadata.menus.map((menu, index) => (
             <NavItem key={index}>
-              <MenuLink href={menu === 'Home' ? '/' : `#${menu.toLowerCase()}`}>
+              <MenuLink to={menu === 'Home' ? '/' : `/#${menu.toLowerCase()}`}>
                 {menu}
               </MenuLink>
             </NavItem>
