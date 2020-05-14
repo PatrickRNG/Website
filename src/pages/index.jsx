@@ -5,6 +5,7 @@ import '../styles/index.scss';
 import Layout from '../components/layout/layout';
 import Head from '../components/head';
 import Post from '../components/post/post';
+import Object3D from '../components/object3D/object3D';
 import {
   Roles,
   Section,
@@ -20,6 +21,7 @@ import {
   Subtitle,
   SocialTitle,
   CenterDivisor,
+  Separator,
 } from '../styles/main';
 
 const IndexPage = () => {
@@ -27,6 +29,7 @@ const IndexPage = () => {
     site: {
       siteMetadata: { socialMedia },
     },
+    allMdx: { edges },
   } = useStaticQuery(graphql`
     query {
       site {
@@ -40,23 +43,47 @@ const IndexPage = () => {
           }
         }
       }
+      allMdx(
+        filter: { frontmatter: { published: { eq: true } } }
+        sort: { fields: frontmatter___date, order: DESC }
+      ) {
+        edges {
+          node {
+            frontmatter {
+              title
+              date
+              author
+              subtitle
+            }
+            fields {
+              slug
+            }
+          }
+        }
+      }
     }
   `);
 
   return (
     <Layout>
-      <Section id="Home" style={{ height: 'calc(100vh - 200px)' }}>
-        <Head title="Home" />
-        <BoldHeader>
-          Hi,
-          <br />
-          I’m Patrick,
-          <br />
-          web developer.
-        </BoldHeader>
-        <Roles>Front End / Back End / Fullstack / UI &amp; UX</Roles>
+      <Head title="Home" />
+      <Section style={{ height: 'calc(100vh - 200px)', display: 'flex', justifyContent: 'space-between' }}>
+        <div>
+          <BoldHeader>
+            Hi,
+            <br />
+            I’m Patrick,
+            <br />
+            web developer.
+          </BoldHeader>
+          <Roles>Front End / Back End / Fullstack / UI &amp; UX</Roles>
+        </div>
+        <div style={{width: '500px'}}>
+          <Object3D />
+        </div>
       </Section>
-      <AboutSection id="about">
+      <Separator id="about" />
+      <AboutSection>
         <H1>About me</H1>
         <P>
           I’ve always been in the technology side since I was a kid, studying
@@ -82,47 +109,26 @@ const IndexPage = () => {
           time.
         </P>
       </AboutSection>
-      <BlogSection id="blog">
+      <Separator id="blog" />
+      <BlogSection>
         <H1>Blog</H1>
         <BlogWrapper>
-          <div>
+          {edges.slice(0, 4).map((edge) => (
             <Post
-              title="Node.js internals and it’s importance"
-              subtitle="Why learn Node.js internals?"
-              author="Patrick Passarella"
-              date="March 13th, 2020"
+              title={edge.node.frontmatter.title}
+              subtitle={edge.node.frontmatter.subtitle}
+              author={edge.node.frontmatter.author}
+              date={edge.node.frontmatter.date}
+              link={`/blog/${edge.node.fields.slug}`}
             />
-            <Post
-              title="Working with Dependency Injection in Node.js"
-              subtitle="Implementing Dependency Injection with Awillix, is it worth it?"
-              author="Patrick Passarella"
-              date="March 13th, 2020"
-            />
-            <Post
-              title="Using Vault instead of .env"
-              subtitle="Is .env absolete?"
-              author="Patrick Passarella"
-              date="March 13th, 2020"
-            />
-          </div>
-          <div>
-            <Post
-              title="Creating a server in GraphQL with Nest.js"
-              subtitle="Is graphQL good for backend with Nest.js?"
-              author="Patrick Passarella"
-              date="March 13th, 2020"
-            />
-            <Post
-              title="Working with Gatsby.js"
-              subtitle="Creating a dynamic blog with Gatsby.js"
-              author="Patrick Passarella"
-              date="March 13th, 2020"
-            />
-            <Subtitle style={{marginLeft: '10px'}} to="/blog">See all posts</Subtitle>
-          </div>
+          ))}
         </BlogWrapper>
+        <Subtitle to="/blog" style={{ marginLeft: '10px', marginTop: '10px' }}>
+          See all posts
+        </Subtitle>
       </BlogSection>
-      <ContactSection id="contact">
+      <Separator id="contact" />
+      <ContactSection>
         <TwoWrapper>
           <div className="left">
             <H1>Contact</H1>
@@ -138,23 +144,37 @@ const IndexPage = () => {
             <Flex>
               <div>
                 <SocialTitle>Github</SocialTitle>
-                <Subtitle as="a" href={socialMedia.github} target="_blank">{socialMedia.github}</Subtitle>
+                <Subtitle as="a" href={socialMedia.github} target="_blank">
+                  {socialMedia.github}
+                </Subtitle>
               </div>
               <div>
                 <SocialTitle>Linkedin</SocialTitle>
-                <Subtitle as="a" href={`${socialMedia.linkedin}?locale=en_US`} target="_blank">{socialMedia.linkedin}</Subtitle>
+                <Subtitle
+                  as="a"
+                  href={`${socialMedia.linkedin}?locale=en_US`}
+                  target="_blank"
+                >
+                  {socialMedia.linkedin}
+                </Subtitle>
               </div>
               <div>
                 <SocialTitle>Twitter</SocialTitle>
-                <Subtitle as="a" href={socialMedia.twitter} target="_blank">{socialMedia.twitter}</Subtitle>
+                <Subtitle as="a" href={socialMedia.twitter} target="_blank">
+                  {socialMedia.twitter}
+                </Subtitle>
               </div>
               <div>
                 <SocialTitle>Instagram</SocialTitle>
-                <Subtitle as="a" href={socialMedia.instagram} target="_blank">{socialMedia.instagram}</Subtitle>
+                <Subtitle as="a" href={socialMedia.instagram} target="_blank">
+                  {socialMedia.instagram}
+                </Subtitle>
               </div>
               <div>
                 <SocialTitle>E-mail</SocialTitle>
-                <Subtitle as="a" href={`mailto:${socialMedia.email}`} >{socialMedia.email}</Subtitle>
+                <Subtitle as="a" href={`mailto:${socialMedia.email}`}>
+                  {socialMedia.email}
+                </Subtitle>
               </div>
             </Flex>
           </div>

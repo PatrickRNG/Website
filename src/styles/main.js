@@ -12,7 +12,6 @@ const Roles = styled.p`
 const Section = styled.section`
   padding: 0 145px;
   height: calc(100vh - 110px);
-  border-bottom: 2px solid #2b2b2b;
 
   @media ${device.tablet} and (max-width: 1023px) {
     padding: 0 45px;
@@ -21,6 +20,12 @@ const Section = styled.section`
   @media ${device.mobileS} and (max-width: 767px) {
     padding: 0 20px;
   }
+`;
+
+const Separator = styled.div`
+  height: 2px;
+  background-color: #2b2b2b;
+  width: 100%;
 `;
 
 const H1 = styled.h1`
@@ -186,4 +191,5 @@ export {
   CenterDivisor,
   StaticDivisor,
   Flex,
+  Separator
 };

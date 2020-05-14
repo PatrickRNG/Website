@@ -1,4 +1,10 @@
-import styled from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
+
+const GlobalStyle = createGlobalStyle`
+  html {
+    scroll-behavior: ${props => props.smooth ? 'smooth' : 'auto'};
+  }
+`;
 
 const Container = styled.div`
   margin: 0 auto;
@@ -13,4 +19,4 @@ const Content = styled.div`
   margin: 0 auto;
 `;
 
-export { Container, Content };
+export { Container, Content, GlobalStyle };
