@@ -27,7 +27,7 @@ import {
   MainHeader,
 } from '../styles/main';
 
-const IndexPage = () => {
+const IndexPage = ({location}) => {
   const {
     site: {
       siteMetadata: { socialMedia },
@@ -82,7 +82,7 @@ const IndexPage = () => {
   };
 
   return (
-    <Layout>
+    <Layout location={location}>
       <Head title="Home" />
       <Section
         style={{
