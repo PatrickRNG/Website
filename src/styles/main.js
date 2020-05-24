@@ -141,30 +141,6 @@ export const BlogWrapper = styled.div`
   }
 `;
 
-export const Divisor = styled.div`
-  width: 1.5px;
-  background-color: #2b2b2b;
-  height: 70%;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -62%);
-
-  @media ${device.mobileS} and (max-width: 1023px) {
-    display: none;
-  }
-`;
-
-export const StaticDivisor = styled.div`
-  width: 1.5px;
-  background-color: #2b2b2b;
-  margin: 0 30px;
-
-  @media ${device.mobileS} and (max-width: 1023px) {
-    display: none;
-  }
-`;
-
 export const CenterDivisor = styled.div`
   width: 1.5px;
   background-color: #2b2b2b;
