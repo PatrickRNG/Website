@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { device } from '../../utils/devices';
 
 const PostWrapper = styled.div`
   margin-bottom: 35px;
@@ -8,6 +9,10 @@ const PostWrapper = styled.div`
 
   &:hover {
     background-color: #252525;
+  }
+
+  @media ${device.mobileS} and (max-width: 425px) {
+    width: 100%;
   }
 `;
 

@@ -8,7 +8,7 @@ published: true
 
 I am sure that you already found a website with an image not loading, maybe you don't really cared that much, but a lot of users care and find it very irritating. It's something incredible simple to solve, that adds a solid value to your application/website.
 
-To start it off, let's build a simple Image React component with Typescript, that does not have anything really important in it.
+To start it off, let's build a simple Image React component with Typescript.
 
 ```jsx
 interface Props {
@@ -41,7 +41,8 @@ So if the main url fails, it will change the `src` from the image to the passed 
 
 ![gif](./fallback-image.gif)
 
-Now, how to test it with Jest? After long and painful hours of trying to test it properly, I found (with the help of the community), a not-too-bad solution, it's not the best, but at least we can test it.
+Just change the URL to something non-existent and you will see that it will change the image source to the fallback one.   
+Now, how to test it with Jest? After long and painful hours of trying to test it properly, I found (with the help of the community), a not-too-bad solution, it's not the best, but at least we can test it properly.
 
 ```jsx
 import React from 'react';

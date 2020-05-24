@@ -1,5 +1,5 @@
 import React from 'react';
-import { graphql, useStaticQuery } from 'gatsby';
+import { graphql, useStaticQuery, Link } from 'gatsby';
 import { H2, MenuHeader, MenuLink, NavItem, NavList } from './styles';
 
 const Header = () => {
@@ -15,7 +15,7 @@ const Header = () => {
 
   return (
     <MenuHeader>
-      <H2>Patrick Passarella</H2>
+      <H2 style={{fontWeight: '700'}}><Link style={{textDecoration: 'none '}} to="/">Patrick Passarella</Link></H2>
       <nav>
         <NavList>
           {data.site.siteMetadata.menus.map((menu, index) => (

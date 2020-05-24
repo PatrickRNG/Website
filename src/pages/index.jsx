@@ -1,5 +1,6 @@
 import React from 'react';
 import { useStaticQuery, graphql } from 'gatsby';
+import { useMediaQuery } from 'react-responsive';
 
 import '../styles/index.scss';
 import Layout from '../components/layout/layout';
@@ -22,6 +23,8 @@ import {
   SocialTitle,
   CenterDivisor,
   Separator,
+  HeadWrapper,
+  MainHeader,
 } from '../styles/main';
 
 const IndexPage = () => {
@@ -64,11 +67,31 @@ const IndexPage = () => {
     }
   `);
 
+  const maxLaptopL = useMediaQuery({ query: '(max-width: 1440px)' });
+  const maxLaptop = useMediaQuery({ query: '(max-width: 1024px)' });
+  const maxTablet = useMediaQuery({ query: '(max-width: 768px)' });
+  const maxMobileL = useMediaQuery({ query: '(max-width: 425px)' });
+  const maxMobileM = useMediaQuery({ query: '(max-width: 375px)' });
+
+  const render3DHead = () => {
+    if (maxMobileM) return null;
+    if (maxMobileL) return <Object3D fov={55} />;
+    if (maxTablet) return <Object3D fov={35} />;
+    if (maxLaptop) return <Object3D fov={35} />;
+    if (maxLaptopL) return <Object3D fov={30} />;
+  };
+
   return (
     <Layout>
       <Head title="Home" />
-      <Section style={{ height: 'calc(100vh - 200px)', display: 'flex', justifyContent: 'space-between' }}>
-        <div>
+      <Section
+        style={{
+          height: 'calc(100vh - 95px)',
+          display: 'flex',
+          justifyContent: 'space-between',
+        }}
+      >
+        <MainHeader>
           <BoldHeader>
             Hi,
             <br />
@@ -77,10 +100,8 @@ const IndexPage = () => {
             web developer.
           </BoldHeader>
           <Roles>Front End / Back End / Fullstack / UI &amp; UX</Roles>
-        </div>
-        <div style={{width: '500px'}}>
-          <Object3D />
-        </div>
+        </MainHeader>
+        <HeadWrapper>{render3DHead()}</HeadWrapper>
       </Section>
       <Separator id="about" />
       <AboutSection>
@@ -134,18 +155,20 @@ const IndexPage = () => {
             <H1>Contact</H1>
             <P>
               I am interested mostly in small/medium freelance opportunities.
-              However, if you need anything else, feel free to contact me using
-              the form below.
+              However, if you need anything else, feel free to also contact me
+              using the form below.
             </P>
+            <h4 style={{ marginTop: '100px' }}>Coming soon.</h4>
           </div>
           <CenterDivisor />
+          {maxLaptop && <Separator id="social" />}
           <div className="right">
             <H1>Social Media</H1>
             <Flex>
               <div>
-                <SocialTitle>Github</SocialTitle>
-                <Subtitle as="a" href={socialMedia.github} target="_blank">
-                  {socialMedia.github}
+                <SocialTitle>Twitter</SocialTitle>
+                <Subtitle as="a" href={socialMedia.twitter} target="_blank">
+                  {socialMedia.twitter}
                 </Subtitle>
               </div>
               <div>
@@ -159,9 +182,9 @@ const IndexPage = () => {
                 </Subtitle>
               </div>
               <div>
-                <SocialTitle>Twitter</SocialTitle>
-                <Subtitle as="a" href={socialMedia.twitter} target="_blank">
-                  {socialMedia.twitter}
+                <SocialTitle>Github</SocialTitle>
+                <Subtitle as="a" href={socialMedia.github} target="_blank">
+                  {socialMedia.github}
                 </Subtitle>
               </div>
               <div>

@@ -2,44 +2,54 @@ import styled from 'styled-components';
 import { Link } from 'gatsby';
 import { device } from '../utils/devices';
 
-const Roles = styled.p`
+const HEADER_MARGIN = 110;
+const HEADER_MARGIN_MOBILE = 50;
+
+export const Roles = styled.p`
   font-size: 0.75rem;
   color: #8d8d8d;
   font-weight: bold;
   margin-top: 20px;
 `;
 
-const Section = styled.section`
+export const Section = styled.section`
+  position: relative;
   padding: 0 145px;
-  height: calc(100vh - 110px);
+  height: calc(100vh - ${HEADER_MARGIN}px);
 
-  @media ${device.tablet} and (max-width: 1023px) {
+  @media ${device.tablet} and (max-width: 1024px) {
     padding: 0 45px;
   }
 
   @media ${device.mobileS} and (max-width: 767px) {
     padding: 0 20px;
   }
+
+  @media ${device.mobileS} and (max-width: 768px) {
+    height: calc(100vh - ${HEADER_MARGIN_MOBILE}px);
+    padding: 0 20px;
+  }
 `;
 
-const Separator = styled.div`
+export const Separator = styled.div`
   height: 2px;
   background-color: #2b2b2b;
   width: 100%;
 `;
 
-const H1 = styled.h1`
+export const H1 = styled.h1`
   font-size: 3.75rem;
   font-weight: bold;
-  margin-top: 110px;
+  margin-top: ${HEADER_MARGIN}px;
   margin-bottom: 42px;
 
-  @media ${device.mobileS} and (max-width: 409px) {
+  @media ${device.mobileS} and (max-width: 768px) {
+    margin-top: ${HEADER_MARGIN_MOBILE}px;
     font-size: 2.85rem;
   }
 `;
 
-const Subtitle = styled(Link)`
+export const Subtitle = styled(Link)`
   font-size: 1rem;
   font-weight: bold;
   opacity: 0.55;
@@ -53,12 +63,12 @@ const Subtitle = styled(Link)`
   }
 `;
 
-const BoldHeader = styled(H1)`
+export const BoldHeader = styled(H1)`
   font-family: 'Open Sans', 'Lato', sans-serif;
   margin-bottom: 22px;
 `;
 
-const P = styled.p`
+export const P = styled.p`
   font-weight: bold;
   font-size: 1rem;
   margin-bottom: 1.35rem;
@@ -66,13 +76,13 @@ const P = styled.p`
   line-height: 120%;
 `;
 
-const AboutSection = styled(Section)`
+export const AboutSection = styled(Section)`
   @media ${device.mobileS} and (max-width: 425px) {
     height: 100%;
   }
 `;
 
-const BlogSection = styled(Section)`
+export const BlogSection = styled(Section)`
   position: relative;
 
   @media ${device.mobileS} and (max-width: 1024px) {
@@ -81,20 +91,29 @@ const BlogSection = styled(Section)`
   }
 `;
 
-const ContactSection = styled(Section)`
+export const ContactSection = styled(Section)`
   height: 100vh;
 
   @media ${device.mobileS} and (max-width: 1024px) {
     height: 100%;
+    padding: 0;
   }
 `;
 
-const TwoWrapper = styled.div`
+export const TwoWrapper = styled.div`
   display: flex;
   height: 100%;
 
   @media ${device.mobileS} and (max-width: 1024px) {
     flex-direction: column;
+  }
+
+  & .left,
+  & .right {
+    @media ${device.mobileS} and (max-width: 1024px) {
+      height: 100vh;
+      padding: 0 20px;
+    }
   }
 
   & .left {
@@ -110,19 +129,19 @@ const TwoWrapper = styled.div`
   }
 `;
 
-const BlogWrapper = styled.div`
+export const BlogWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
 
-  @media ${device.mobileS} and (max-width: 1023px) {
+  @media ${device.mobileS} and (max-width: 425px) {
     height: 100%;
-    display: flex;
     flex-direction: column;
+    min-height: 350px;
   }
 `;
 
-const Divisor = styled.div`
+export const Divisor = styled.div`
   width: 1.5px;
   background-color: #2b2b2b;
   height: 70%;
@@ -136,7 +155,7 @@ const Divisor = styled.div`
   }
 `;
 
-const StaticDivisor = styled.div`
+export const StaticDivisor = styled.div`
   width: 1.5px;
   background-color: #2b2b2b;
   margin: 0 30px;
@@ -146,7 +165,7 @@ const StaticDivisor = styled.div`
   }
 `;
 
-const CenterDivisor = styled.div`
+export const CenterDivisor = styled.div`
   width: 1.5px;
   background-color: #2b2b2b;
   margin: auto 80px;
@@ -157,39 +176,40 @@ const CenterDivisor = styled.div`
   }
 `;
 
-const SocialTitle = styled.p`
+export const SocialTitle = styled.p`
   font-size: 0.9rem;
   font-weight: bold;
   margin-bottom: 7px;
 `;
 
-const Flex = styled.div`
+export const Flex = styled.div`
   @media (max-width: 1024px) {
     display: flex;
     flex-wrap: wrap;
 
     & > div:nth-child(odd) {
-      margin-right: 30px;
+      width: 50%;
     }
   }
 `;
 
-export {
-  Roles,
-  Section,
-  H1,
-  Subtitle,
-  BoldHeader,
-  P,
-  AboutSection,
-  BlogSection,
-  BlogWrapper,
-  Divisor,
-  ContactSection,
-  TwoWrapper,
-  SocialTitle,
-  CenterDivisor,
-  StaticDivisor,
-  Flex,
-  Separator
-};
+export const HeadWrapper = styled.div`
+  width: 50%;
+
+  @media ${device.mobileS} and (max-width: 425px) {
+    width: 30%;
+  }
+
+  & canvas {
+    right: 0;
+    position: absolute;
+  }
+`;
+
+export const MainHeader = styled.div`
+  width: 50%;
+
+  @media ${device.mobileS} and (max-width: 425px) {
+    width: 70%;
+  }
+`;

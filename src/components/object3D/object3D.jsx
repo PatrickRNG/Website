@@ -1,40 +1,53 @@
-import * as THREE from 'three'
-import React, { Suspense, useRef } from 'react'
-import { Canvas, Dom, extend, useLoader, useThree, useFrame } from 'react-three-fiber'
-import lerp from 'lerp'
+import * as THREE from 'three';
+import React, { Suspense, useRef, useEffect } from 'react';
+import { Canvas, useFrame, useThree, extend } from 'react-three-fiber';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Model from '../../model/model';
+import { ObjectLoader } from 'three';
 
-function Rig({ children }) {
-  const outer = useRef()
-  const inner = useRef()
-  useFrame(({ clock }) => {
-    outer.current.position.y = lerp(outer.current.position.y, 0, 0.05)
-    inner.current.rotation.y = Math.sin(clock.getElapsedTime() / 8) * Math.PI
-    // inner.current.position.z = 5 + -Math.sin(clock.getElapsedTime() / 2) * 10
-    inner.current.position.y = -5 + Math.sin(clock.getElapsedTime() / 2) * 2
-  })
+extend({ OrbitControls });
+
+const CameraControls = () => {
+  const {
+    camera,
+    gl: { domElement },
+  } = useThree();
+  // Ref to the controls, so that we can update them on every frame using useFrame
+  const controls = useRef();
+  useFrame(() => controls.current.update());
   return (
-    <group position={[0, -100, 0]} ref={outer}>
-      <group ref={inner}>{children}</group>
-    </group>
-  )
-}
+    <orbitControls
+      ref={controls}
+      args={[camera, domElement]}
+      enableZoom={false}
+      maxAzimuthAngle={Math.PI / 4}
+      maxPolarAngle={Math.PI}
+      minAzimuthAngle={-Math.PI / 4}
+      minPolarAngle={0}
+      args={[camera, domElement]}
+    />
+  );
+};
 
-export default function App() {
+function Object3D({fov = 30}) {
   return (
     <Canvas
       concurrent
-      camera={{ position: [0, 15, 30], fov: 70 }}
-      >
-      <ambientLight intensity={6} />
-      <Suspense fallback={<Dom center>loading ...</Dom>}>
-        <Rig>
-          <Model />
-          <mesh scale={[1000, 1000, 1]} rotation={[-Math.PI / 2, 0, 0]} onPointerOver={e => e.stopPropagation()}>
-            <meshBasicMaterial attach="material" transparent opacity={0.7} color="skyblue" />
-          </mesh>
-        </Rig>
+      camera={{ position: [40, 20, 0], fov }}
+      gl={{ antialias: false }}
+      shadowMap
+      onCreated={({ gl }) => {
+        gl.toneMapping = THREE.Uncharted2ToneMapping;
+        gl.outputEncoding = THREE.sRGBEncoding;
+      }}
+    >
+      <CameraControls />
+      <ambientLight intensity={1} />
+      <Suspense fallback={null}>
+        <Model />
       </Suspense>
     </Canvas>
-  )
+  );
 }
+
+export default Object3D;
