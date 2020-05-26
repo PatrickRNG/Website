@@ -8758,11 +8758,6 @@ lcid@^2.0.0:
   dependencies:
     invert-kv "^2.0.0"
 
-lerp@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/lerp/-/lerp-1.0.3.tgz#a18c8968f917896de15ccfcc28d55a6b731e776e"
-  integrity sha1-oYyJaPkXiW3hXM/MKNVaa3Med24=
-
 leven@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/leven/-/leven-3.1.0.tgz#77891de834064cccba82ae7842bb6b14a13ed7f2"
@@ -11783,6 +11778,11 @@ react-responsive@^8.0.3:
     matchmediaquery "^0.3.0"
     prop-types "^15.6.1"
     shallow-equal "^1.1.0"
+
+react-seo-component@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-seo-component/-/react-seo-component-2.0.0.tgz#65e2370d9db2110a96d62bd63eb4dda7254844b4"
+  integrity sha512-D0GWu+lYfYhBm5hjVIVRd6H9z3aFZmdBe4ypjv5WzlYg+D0+W/1M1CcVdZqtVwT/MJejjZSW7ZPEOk9vIS6XZg==
 
 react-side-effect@^2.1.0:
   version "2.1.0"

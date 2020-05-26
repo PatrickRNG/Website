@@ -5,7 +5,7 @@ const PostWrapper = styled.div`
   margin-bottom: 35px;
   padding: 10px;
   transition: 150ms;
-  width: 40%;
+  // width: 40%;
 
   &:hover {
     background-color: #252525;

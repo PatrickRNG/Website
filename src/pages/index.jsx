@@ -1,12 +1,14 @@
 import React from 'react';
 import { useStaticQuery, graphql } from 'gatsby';
 import { useMediaQuery } from 'react-responsive';
+import SEO from 'react-seo-component';
 
-import '../styles/index.scss';
 import Layout from '../components/layout/layout';
 import Head from '../components/head';
 import Post from '../components/post/post';
 import Object3D from '../components/object3D/object3D';
+import { useSiteMetadata } from '../hooks/useSiteMetadata';
+
 import {
   Roles,
   Section,
@@ -27,7 +29,7 @@ import {
   MainHeader,
 } from '../styles/main';
 
-const IndexPage = ({location}) => {
+const IndexPage = ({ location }) => {
   const {
     site: {
       siteMetadata: { socialMedia },
@@ -81,8 +83,27 @@ const IndexPage = ({location}) => {
     if (maxLaptopL) return <Object3D fov={30} />;
   };
 
+  const {
+    title,
+    description,
+    image,
+    siteUrl,
+    siteLanguage,
+    siteLocale,
+    twitterUsername,
+  } = useSiteMetadata();
+
   return (
     <Layout location={location}>
+      <SEO
+        title={title}
+        description={description || ''}
+        image={`${siteUrl}${image}`}
+        pathname={siteUrl}
+        siteLanguage={siteLanguage}
+        siteLocale={siteLocale}
+        twitterUsername={twitterUsername}
+      />
       <Head title="Home" />
       <Section
         style={{
@@ -136,6 +157,7 @@ const IndexPage = ({location}) => {
         <BlogWrapper>
           {edges.slice(0, 4).map((edge) => (
             <Post
+              key={edge.node.fields.slug}
               title={edge.node.frontmatter.title}
               subtitle={edge.node.frontmatter.subtitle}
               author={edge.node.frontmatter.author}
