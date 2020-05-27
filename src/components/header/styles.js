@@ -21,7 +21,7 @@ const MenuHeader = styled.header`
 `;
 
 const H2 = styled.h2`
-  font-size: 1.25rem;
+  font-size: 0.9rem;
   font-weight: bold;
 `;
 
@@ -39,10 +39,10 @@ const NavList = styled.ul`
 `;
 
 const NavItem = styled.li`
+  font-size: 0.9rem;
   &:not(:last-child) {
     @media ${device.mobileS} and (max-width: 410px), (min-width: 768px) {
       margin-right: 2.3rem;
-      font-size: 1rem;
     }
   }
 

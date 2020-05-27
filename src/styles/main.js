@@ -32,13 +32,14 @@ export const Section = styled.section`
 `;
 
 export const Separator = styled.div`
-  height: 2px;
+  height: 1px;
   background-color: #2b2b2b;
-  width: 100%;
+  width: 80%;
+  margin: 0 auto;
 `;
 
 export const H1 = styled.h1`
-  font-size: 3.75rem;
+  font-size: 3.4rem;
   font-weight: bold;
   margin-top: ${HEADER_MARGIN}px;
   margin-bottom: 42px;
@@ -50,7 +51,7 @@ export const H1 = styled.h1`
 `;
 
 export const Subtitle = styled(Link)`
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: bold;
   opacity: 0.55;
   text-decoration: none;
@@ -69,11 +70,10 @@ export const BoldHeader = styled(H1)`
 `;
 
 export const P = styled.p`
-  font-weight: bold;
-  font-size: 1rem;
+  font-size: 0.88rem;
   margin-bottom: 1.35rem;
   max-width: 633px;
-  line-height: 120%;
+  line-height: 130%;
 `;
 
 export const AboutSection = styled(Section)`
