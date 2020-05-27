@@ -15,7 +15,7 @@ const MenuHeader = styled.header`
     margin: 45px 55px 25px 55px;
   }
 
-  @media ${device.mobileS} and (max-width: 375px) {
+  @media ${device.mobileS} and (max-width: 425px) {
     flex-direction: column;
   }
 `;
@@ -33,7 +33,7 @@ const NavList = styled.ul`
     margin-top: 1rem;
   }
 
-  @media ${device.mobileL} {
+  @media (min-width: 426px) {
     margin-top: 0;
   }
 `;

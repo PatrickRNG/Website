@@ -3,7 +3,6 @@ import React, { Suspense, useRef, useEffect } from 'react';
 import { Canvas, useFrame, useThree, extend } from 'react-three-fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Model from '../../model/model';
-import { ObjectLoader } from 'three';
 
 extend({ OrbitControls });
 

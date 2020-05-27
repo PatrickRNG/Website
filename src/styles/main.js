@@ -26,8 +26,39 @@ export const Section = styled.section`
   }
 
   @media ${device.mobileS} and (max-width: 768px) {
-    height: calc(100vh - ${HEADER_MARGIN_MOBILE}px);
     padding: 0 20px;
+  }
+`;
+
+export const MainSection = styled(Section)`
+  display: flex;
+  justify-content: space-between;
+
+  @media ${device.mobileS} and (max-width: 768px) {
+    flex-direction: column;
+  } 
+`;
+
+export const HeadWrapper = styled.div`
+  width: 50%;
+
+  @media ${device.mobileS} and (max-width: 768px) {
+    width: 100%;
+    height: 50%;
+    pointer-events: none;
+  } 
+
+  & canvas {
+    right: 0;
+    position: absolute;
+  }
+`;
+
+export const MainHeader = styled.div`
+  width: 50%;
+
+  @media ${device.mobileS} and (max-width: 425px) {
+    width: 100%;
   }
 `;
 
@@ -166,26 +197,5 @@ export const Flex = styled.div`
     & > div:nth-child(odd) {
       width: 50%;
     }
-  }
-`;
-
-export const HeadWrapper = styled.div`
-  width: 50%;
-
-  @media ${device.mobileS} and (max-width: 425px) {
-    width: 30%;
-  }
-
-  & canvas {
-    right: 0;
-    position: absolute;
-  }
-`;
-
-export const MainHeader = styled.div`
-  width: 50%;
-
-  @media ${device.mobileS} and (max-width: 425px) {
-    width: 70%;
   }
 `;

@@ -27,6 +27,7 @@ import {
   Separator,
   HeadWrapper,
   MainHeader,
+  MainSection,
 } from '../styles/main';
 
 const IndexPage = ({ location }) => {
@@ -69,18 +70,16 @@ const IndexPage = ({ location }) => {
     }
   `);
 
-  const maxLaptopL = useMediaQuery({ query: '(max-width: 1440px)' });
+  // const maxLaptopL = useMediaQuery({ query: '(max-width: 1440px)' });
   const maxLaptop = useMediaQuery({ query: '(max-width: 1024px)' });
   const maxTablet = useMediaQuery({ query: '(max-width: 768px)' });
   const maxMobileL = useMediaQuery({ query: '(max-width: 425px)' });
-  const maxMobileM = useMediaQuery({ query: '(max-width: 375px)' });
+  // const maxMobileM = useMediaQuery({ query: '(max-width: 375px)' });
 
   const render3DHead = () => {
-    if (maxMobileM) return null;
-    if (maxMobileL) return <Object3D fov={55} />;
-    if (maxTablet) return <Object3D fov={35} />;
-    if (maxLaptop) return <Object3D fov={35} />;
-    if (maxLaptopL) return <Object3D fov={30} />;
+    if (maxMobileL) return <Object3D fov={30} />;
+    if (maxTablet) return <Object3D fov={25} />;
+    return <Object3D fov={34} />;
   };
 
   const {
@@ -105,13 +104,7 @@ const IndexPage = ({ location }) => {
         twitterUsername={twitterUsername}
       />
       <Head title="Home" />
-      <Section
-        style={{
-          height: 'calc(100vh - 95px)',
-          display: 'flex',
-          justifyContent: 'space-between',
-        }}
-      >
+      <MainSection>
         <MainHeader>
           <BoldHeader>
             Hi,
@@ -123,7 +116,7 @@ const IndexPage = ({ location }) => {
           <Roles>Front End / Back End / Fullstack / UI &amp; UX</Roles>
         </MainHeader>
         <HeadWrapper>{render3DHead()}</HeadWrapper>
-      </Section>
+      </MainSection>
       <Separator id="about" />
       <AboutSection>
         <H1>About me</H1>
