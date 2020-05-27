@@ -128,27 +128,29 @@ const IndexPage = ({ location }) => {
       <AboutSection>
         <H1>About me</H1>
         <P>
+          I'm Patrick Passarella, an fullstack web developer based on Brazil.
+        </P>
+        <P>
           I’ve always been in the technology side since I was a kid, studying
-          Pretty much anything related to that in the course of my life and
+          pretty much anything related to that in the course of my life and
           career, like game-development, 3D modeling, animation, music, motion
-          design and UX/UI, I consider myself as a fast learner, picking up new
-          skills with relative ease. Today my focus is mostly web related.
+          design, and UI/UX, I consider myself as a fast learner, picking up new
+          skills with relative ease. Today my focus is mostly web-related.
         </P>
         <P>
           I’m always in hunger for learning and I consider knowledge the most
-          important thing in my life, not only counting the technical side, but
+          important thing in my life, not only counting the technical side but
           as a person, always growing with empathy and emotion.
         </P>
         <P>
           Inspiring others is one of my natural talents, as I’m easily inspired
           and I try my best to keep learning with enthusiasm. My energy takes me
-          to pursuit many other interests, hobbies and areas of study, like
-          investments, philosophy, math, fitness and cooking.
+          to pursuit many other interests, hobbies, and areas of study, such as
+          economics, philosophy, math, fitness, and cooking.
         </P>
         <P>
           Currently I work in a full-time job and interested in
-          entrepreneurship, but also looking for some freelancing in my free
-          time.
+          entrepreneurship, but also looking for some freelancing.
         </P>
       </AboutSection>
       <Separator id="blog" />

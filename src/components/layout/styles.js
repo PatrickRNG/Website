@@ -35,6 +35,7 @@ const GlobalStyle = createGlobalStyle`
     color: #fff;
     box-sizing: border-box;
     list-style: none;
+    letter-spacing: 0.3px;
   }
 
   canvas {
