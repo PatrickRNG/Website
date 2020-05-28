@@ -91,19 +91,19 @@ const IndexPage = ({ location }) => {
     siteLocale,
     twitterUsername,
   } = useSiteMetadata();
-
+  
   return (
     <Layout location={location}>
       <SEO
-        title={title}
+        title={'Home'}
         description={description || ''}
         image={`${siteUrl}${image}`}
         pathname={siteUrl}
         siteLanguage={siteLanguage}
         siteLocale={siteLocale}
         twitterUsername={twitterUsername}
+        titleTemplate={title}
       />
-      <Head title="Home" />
       <MainSection>
         <MainHeader>
           <BoldHeader>

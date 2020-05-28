@@ -7,7 +7,6 @@ const siteMetadata = {
   siteLanguage: 'en-US',
   siteLocale: 'en_us',
   twitterUsername: '@P_Passarella',
-  titleTemplate: '',
   menus: ['Home', 'About', 'Blog', 'Contact'],
   socialMedia: {
     linkedin: 'https://linkedin.com/in/patrick-passarella/',

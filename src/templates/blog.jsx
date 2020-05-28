@@ -10,6 +10,7 @@ import { useSiteMetadata } from '../hooks/useSiteMetadata';
 const Blog = ({ data, pageContext }) => {
   // const { previous, next } = pageContext;
   const {
+    title : siteTitle,
     image,
     siteUrl,
     siteLanguage,
@@ -24,6 +25,7 @@ const Blog = ({ data, pageContext }) => {
     <Layout contentStyle={{ maxWidth: '1032px', padding: '0 1.5rem' }}>
       <SEO
         title={title}
+        titleTemplate={siteTitle}
         description={subtitle}
         image={cover === null ? `${siteUrl}${image}` : `${siteUrl}${cover.publicURL}`}
         pathname={`${siteUrl}${fields.slug}`}
