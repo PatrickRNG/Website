@@ -1,8 +1,8 @@
 const siteMetadata = {
   title: 'Patrick Passarella',
   author: 'Patrick Passarella',
-  description: 'This is my personal website, as well as my blog',
-  image: '/default-site-image.jpg',
+  description: 'I\'m Patrick, a fullstack web developer, here I write about some technical and career stuff, also there is some information about me',
+  image: '/website-cover.png',
   siteUrl: 'https://patrickpassarella.com/',
   siteLanguage: 'en-US',
   siteLocale: 'en_us',
