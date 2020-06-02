@@ -20,10 +20,11 @@ const siteMetadata = {
 module.exports = {
   siteMetadata,
   plugins: [
-    'gatsby-plugin-react-helmet',
-    'gatsby-transformer-sharp',
-    'gatsby-plugin-sharp',
-    'gatsby-plugin-styled-components',
+    `gatsby-plugin-react-helmet`,
+    `gatsby-plugin-sharp`,
+    `gatsby-transformer-sharp`,
+    `gatsby-transformer-remark`,
+    `gatsby-plugin-styled-components`,
     {
       resolve: `gatsby-transformer-sharp`,
       options: {
@@ -34,20 +35,21 @@ module.exports = {
       resolve: `gatsby-source-filesystem`,
       options: {
         name: `posts`,
-        path: `${__dirname}/src/posts/`,
-      },
-    },
-    {
-      resolve: 'gatsby-plugin-page-creator',
-      options: {
         path: `${__dirname}/src/posts`,
       },
     },
     {
+      resolve: `gatsby-plugin-page-creator`,
+      options: {
+        path: `${__dirname}/src/posts`,
+      },
+    },
+    `gatsby-remark-images`,
+    {
       resolve: `gatsby-plugin-mdx`,
       options: {
         gatsbyRemarkPlugins: [
-          'gatsby-remark-copy-linked-files',
+          `gatsby-remark-copy-linked-files`,
           {
             resolve: `gatsby-remark-images`,
             options: {
@@ -55,7 +57,7 @@ module.exports = {
               linkImagesToOriginal: false,
               tracedSVG: true,
               disableBgImage: true,
-              wrapperStyle: 'margin: 30px 0;',
+              wrapperStyle: `margin: 30px 0;`,
             },
           },
         ],
@@ -73,7 +75,7 @@ module.exports = {
         ],
       },
     },
-    'gatsby-plugin-sass',
-    'gatsby-plugin-sharp'
+    `gatsby-plugin-sass`,
+    `gatsby-plugin-sharp`
   ],
 };
