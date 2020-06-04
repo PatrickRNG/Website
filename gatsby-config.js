@@ -1,7 +1,8 @@
 const siteMetadata = {
   title: 'Patrick Passarella',
   author: 'Patrick Passarella',
-  description: 'I\'m Patrick, a fullstack web developer, here I write about some technical and career stuff, also there is some information about me',
+  description:
+    "I'm Patrick, a fullstack web developer, here I write about some technical and career stuff, also there is some information about me",
   image: '/website-cover.png',
   siteUrl: 'https://patrickpassarella.com/',
   siteLanguage: 'en-US',
@@ -76,6 +77,22 @@ module.exports = {
       },
     },
     `gatsby-plugin-sass`,
-    `gatsby-plugin-sharp`
+    `gatsby-plugin-sharp`,
+    {
+      resolve: 'gatsby-plugin-zeit-now',
+      options: {
+        globalHeaders: {
+          'referrer-policy': 'same-origin',
+          'feature-policy':
+            "geolocation 'self'; microphone 'self'; camera 'self'",
+          'expect-ct': 'max-age=604800, enforce',
+          'strict-transport-security': 'max-age=31536000; includeSubDomains',
+          'x-frame-options': 'DENY',
+          'x-xss-protection': '1; mode=block',
+          'x-content-type-options': 'nosniff',
+          'x-download-options': 'noopen',
+        },
+      },
+    },
   ],
 };
