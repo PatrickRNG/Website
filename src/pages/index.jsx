@@ -3,15 +3,13 @@ import { useStaticQuery, graphql } from 'gatsby';
 import { useMediaQuery } from 'react-responsive';
 import SEO from 'react-seo-component';
 
-import Layout from '../components/layout/layout';
-import Head from '../components/head';
-import Post from '../components/post/post';
+import Layout from '../components/Layout/Layout';
+import Post from '../components/Post/Post';
 import Object3D from '../components/object3D/object3D';
 import { useSiteMetadata } from '../hooks/useSiteMetadata';
 
 import {
   Roles,
-  Section,
   H1,
   BoldHeader,
   P,
@@ -70,11 +68,9 @@ const IndexPage = ({ location }) => {
     }
   `);
 
-  // const maxLaptopL = useMediaQuery({ query: '(max-width: 1440px)' });
   const maxLaptop = useMediaQuery({ query: '(max-width: 1024px)' });
   const maxTablet = useMediaQuery({ query: '(max-width: 768px)' });
   const maxMobileL = useMediaQuery({ query: '(max-width: 425px)' });
-  // const maxMobileM = useMediaQuery({ query: '(max-width: 375px)' });
 
   const render3DHead = () => {
     if (maxMobileL) return <Object3D fov={30} />;
@@ -96,7 +92,7 @@ const IndexPage = ({ location }) => {
     <Layout location={location}>
       <SEO
         title={'Home'}
-        description={description || ''}
+        description={description}
         image={`${siteUrl}${image}`}
         pathname={siteUrl}
         siteLanguage={siteLanguage}
@@ -119,7 +115,7 @@ const IndexPage = ({ location }) => {
       </MainSection>
       <Separator id="about" />
       <AboutSection>
-        <H1>About me</H1>
+        <H1 as="h2">About me</H1>
         <P>
           I'm Patrick Passarella, an fullstack web developer based on Brazil.
         </P>
@@ -148,7 +144,7 @@ const IndexPage = ({ location }) => {
       </AboutSection>
       <Separator id="blog" />
       <BlogSection>
-        <H1>Blog</H1>
+        <H1 as="h2">Blog</H1>
         <BlogWrapper>
           {edges.slice(0, 4).map((edge) => (
             <Post
@@ -180,7 +176,7 @@ const IndexPage = ({ location }) => {
           <CenterDivisor />
           {maxLaptop && <Separator id="social" />}
           <div className="right">
-            <H1>Social Media</H1>
+            <H1 as="h2">Social Media</H1>
             <Flex>
               <div>
                 <SocialTitle>Twitter</SocialTitle>

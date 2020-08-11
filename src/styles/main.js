@@ -36,7 +36,7 @@ export const MainSection = styled(Section)`
 
   @media ${device.mobileS} and (max-width: 768px) {
     flex-direction: column;
-  } 
+  }
 `;
 
 export const HeadWrapper = styled.div`
@@ -46,7 +46,7 @@ export const HeadWrapper = styled.div`
     width: 100%;
     height: 50%;
     pointer-events: none;
-  } 
+  }
 
   & canvas {
     right: 0;
@@ -65,7 +65,7 @@ export const MainHeader = styled.div`
 export const Separator = styled.div`
   height: 1px;
   background-color: #2b2b2b;
-  width: 80%;
+  width: ${({ width }) => width || '80%'};
   margin: 0 auto;
 `;
 

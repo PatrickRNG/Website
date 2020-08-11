@@ -1,38 +1,14 @@
 import React from 'react';
 import { graphql } from 'gatsby';
 import { MDXRenderer } from 'gatsby-plugin-mdx';
-import styled from 'styled-components';
 import Img from 'gatsby-image';
 import SEO from 'react-seo-component';
 
-import Layout from '../components/layout/layout';
-import Head from '../components/head';
+import Layout from '../components/Layout/Layout';
+import TwitterCard from '../components/TwitterCard/TwitterCard';
 import { useSiteMetadata } from '../hooks/useSiteMetadata';
-
-const Title = styled.h1`
-  font-size: 2.5rem;
-  margin-top: 1.8rem;
-`;
-
-const Subtitle = styled.p`
-  margin: 6px 0;
-  color: #dadada;
-  font-size: 1.1rem
-`;
-
-const Info = styled.p`
-  margin-bottom: 1.8rem;
-  color: #888;
-  font-size: 0.9rem;
-`;
-
-const PhotoLegend = styled.p`
-  margin-bottom: 1.8rem;
-  margin-top: 0.6rem;
-  font-size: 0.8rem;
-  color: #888;
-  text-align: center;
-`;
+import { Separator } from '../styles/main';
+import { Title, Subtitle, Info, PhotoLegend, EndText } from './styles';
 
 const Blog = ({ data, pageContext }) => {
   // const { previous, next } = pageContext;
@@ -44,9 +20,17 @@ const Blog = ({ data, pageContext }) => {
     siteLocale,
     twitterUsername,
     author,
+    socialMedia: { twitter },
   } = useSiteMetadata();
   const { frontmatter, body, fields } = data.mdx;
-  const { title, date, cover, subtitle } = frontmatter;
+  const {
+    title,
+    date,
+    cover,
+    subtitle,
+    coverCredit,
+    coverWebsite,
+  } = frontmatter;
 
   return (
     <Layout contentStyle={{ maxWidth: '1032px', padding: '0 1.5rem' }}>
@@ -66,17 +50,25 @@ const Blog = ({ data, pageContext }) => {
         publishedDate={date}
         modifiedDate={new Date(Date.now()).toISOString()}
       />
-      <Head title={title} />
       <Title>{title}</Title>
-      <Subtitle>
-        {subtitle}
-      </Subtitle>
+      <Subtitle>{subtitle}</Subtitle>
       <Info>
         {author} - {date}
       </Info>
       <Img fluid={cover.childImageSharp.fluid} />
-      <PhotoLegend>Photo by NeONBRAND on Unsplash</PhotoLegend>
+      <PhotoLegend>{`Photo by ${coverCredit} on ${coverWebsite}`}</PhotoLegend>
       <MDXRenderer>{body}</MDXRenderer>
+      <Separator width="100%" />
+      <EndText>
+        <b className="first">Thanks for reading!</b>Liked the content or
+        just want to send me a message? Follow me on Twitter!
+      </EndText>
+      <TwitterCard
+        name="Patrick Passarella"
+        username={twitterUsername}
+        url={twitter}
+        image="https://pbs.twimg.com/profile_images/1252658694497714177/dRQCSTad_400x400.jpg"
+      />
     </Layout>
   );
 };
@@ -91,6 +83,8 @@ export const query = graphql`
         title
         date
         subtitle
+        coverCredit
+        coverWebsite
         cover {
           publicURL
           childImageSharp {

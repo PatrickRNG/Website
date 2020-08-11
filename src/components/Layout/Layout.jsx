@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from '../header/header';
+import Header from '../Header/Header';
 import { Container, Content, GlobalStyle } from './styles';
 
 const Layout = ({ children, contentStyle, location, ...rest }) => {

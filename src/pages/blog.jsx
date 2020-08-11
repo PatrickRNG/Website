@@ -1,8 +1,8 @@
 import React from 'react';
-import { graphql, useStaticQuery, Link } from 'gatsby';
-import Layout from '../components/layout/layout';
+import { graphql, useStaticQuery } from 'gatsby';
+import Layout from '../components/Layout/Layout';
 import Head from '../components/head';
-import Post from '../components/post/post';
+import Post from '../components/Post/Post';
 import { H1, BlogWrapper, BlogSection } from '../styles/main';
 
 const Blog = () => {
