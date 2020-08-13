@@ -127,13 +127,13 @@ const IndexPage = ({ location }) => {
           skills with relative ease. Today my focus is mostly web-related.
         </P>
         <P>
-          I’m always in hunger for learning and I consider knowledge the most
+          I’m always learning and I consider knowledge the most
           important thing in my life, not only counting the technical side but
-          as a person, always growing with empathy and emotion.
+          as a person, always growing with empathy and emotion as best as I can.
         </P>
         <P>
-          Inspiring others is one of my natural talents, as I’m easily inspired
-          and I try my best to keep learning with enthusiasm. My energy takes me
+          Inspiring others is one of my talents, as I’m easily inspired
+          and I try my best to keep learning with enthusiasm. My energy also takes me
           to pursuit many other interests, hobbies, and areas of study, such as
           economics, philosophy, math, fitness, and cooking.
         </P>
