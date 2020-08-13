@@ -44,7 +44,7 @@ const Blog = () => {
               date={edge.node.frontmatter.date}
               link={`/blog/${edge.node.fields.slug}`}
             />
-          ))}
+          )).reverse()}
         </BlogWrapper>
       </BlogSection>
     </Layout>

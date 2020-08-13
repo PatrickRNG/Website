@@ -155,7 +155,7 @@ const IndexPage = ({ location }) => {
               date={edge.node.frontmatter.date}
               link={`/blog/${edge.node.fields.slug}`}
             />
-          ))}
+          )).reverse()}
         </BlogWrapper>
         <Subtitle to="/blog" style={{ marginLeft: '10px', marginTop: '10px' }}>
           See all posts
