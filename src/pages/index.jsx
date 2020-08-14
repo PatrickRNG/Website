@@ -2,6 +2,7 @@ import React from 'react';
 import { useStaticQuery, graphql } from 'gatsby';
 import { useMediaQuery } from 'react-responsive';
 import SEO from 'react-seo-component';
+import addToMailchimp from 'gatsby-plugin-mailchimp'
 
 import Layout from '../components/Layout/Layout';
 import Post from '../components/Post/Post';
@@ -77,6 +78,11 @@ const IndexPage = ({ location }) => {
     if (maxTablet) return <Object3D fov={25} />;
     return <Object3D fov={34} />;
   };
+
+  const handleEmail = async () => {
+    const resposne = await addToMailchimp('patrick@gmail.com');
+    console.log('>>>', resposne);
+  }
 
   const {
     title,
@@ -172,6 +178,7 @@ const IndexPage = ({ location }) => {
               using the form below.
             </P>
             <h4 style={{ marginTop: '100px' }}>Coming soon.</h4>
+            <button onClick={handleEmail}>Click me</button>
           </div>
           <CenterDivisor />
           {maxLaptop && <Separator id="social" />}

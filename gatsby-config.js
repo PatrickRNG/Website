@@ -97,8 +97,15 @@ module.exports = {
     {
       resolve: `gatsby-plugin-google-analytics`,
       options: {
-        trackingId: "UA-175438172-1",
+        trackingId: 'UA-175438172-1',
       },
-    }
+    },
+    {
+      resolve: 'gatsby-plugin-mailchimp',
+      options: {
+        endpoint: 'https://patrickpassarella.us17.list-manage.com/subscribe/post?u=77ace10819e59c6cb9ca53b5b&amp;id=c014aac34f',
+        timeout: 10000,
+      },
+    },
   ],
 };
