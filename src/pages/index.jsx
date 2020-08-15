@@ -178,7 +178,7 @@ const IndexPage = ({ location }) => {
               using the form below.
             </P>
             <h4 style={{ marginTop: '100px' }}>Coming soon.</h4>
-            <button onClick={handleEmail}>Click me</button>
+            {/* <button onClick={handleEmail}>Click me</button> */}
           </div>
           <CenterDivisor />
           {maxLaptop && <Separator id="social" />}
