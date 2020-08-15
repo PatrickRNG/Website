@@ -199,3 +199,35 @@ export const Flex = styled.div`
     }
   }
 `;
+
+export const Newsletter = styled.form`
+  margin-top: 64px;
+  & .newsletter {
+    &-input {
+      border: none;
+      background: #3a3a3a;
+      color: #fff;
+      padding: 12px;
+      outline: none;
+      width: 220px;
+
+      &::placeholder {
+        color: #969696;
+      }
+    }
+
+    &-button {
+      padding: 12px;
+      border: none;
+      cursor: pointer;
+      background-color: #e4e4e4;
+      color: #1d1d1d;
+      transition: .15s;
+      outline: none;
+
+      &:hover {
+        opacity: .9;
+      }
+    }
+  }
+`;

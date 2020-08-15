@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useStaticQuery, graphql } from 'gatsby';
 import { useMediaQuery } from 'react-responsive';
 import SEO from 'react-seo-component';
-import addToMailchimp from 'gatsby-plugin-mailchimp'
+import addToMailchimp from 'gatsby-plugin-mailchimp';
 
 import Layout from '../components/Layout/Layout';
 import Post from '../components/Post/Post';
@@ -27,6 +27,7 @@ import {
   HeadWrapper,
   MainHeader,
   MainSection,
+  Newsletter,
 } from '../styles/main';
 
 const IndexPage = ({ location }) => {
@@ -69,6 +70,9 @@ const IndexPage = ({ location }) => {
     }
   `);
 
+  const [email, setEmail] = useState('');
+  const [newsletterText, setNewsletterText] = useState('');
+
   const maxLaptop = useMediaQuery({ query: '(max-width: 1024px)' });
   const maxTablet = useMediaQuery({ query: '(max-width: 768px)' });
   const maxMobileL = useMediaQuery({ query: '(max-width: 425px)' });
@@ -79,10 +83,22 @@ const IndexPage = ({ location }) => {
     return <Object3D fov={34} />;
   };
 
-  const handleEmail = async () => {
-    const resposne = await addToMailchimp('patrick@gmail.com');
-    console.log('>>>', resposne);
-  }
+  const handleNewsletter = async (e) => {
+    e.preventDefault();
+    const { result, msg } = await addToMailchimp(email);
+    if (result === 'error') {
+      if (msg.includes('is already subscribed')) {
+        return setNewsletterText("You're already subscribed!");
+      }
+      return setNewsletterText('Some error ocurred, unable to subscribe');
+    }
+    
+    setNewsletterText('Thank you for subscribing! Have a great day')
+  };
+
+  const handleChangeEmail = (e) => {
+    setEmail(e.target.value);
+  };
 
   const {
     title,
@@ -93,7 +109,7 @@ const IndexPage = ({ location }) => {
     siteLocale,
     twitterUsername,
   } = useSiteMetadata();
-  
+
   return (
     <Layout location={location}>
       <SEO
@@ -133,13 +149,13 @@ const IndexPage = ({ location }) => {
           skills with relative ease. Today my focus is mostly web-related.
         </P>
         <P>
-          I’m always learning and I consider knowledge the most
-          important thing in my life, not only counting the technical side but
-          as a person, always growing with empathy and emotion as best as I can.
+          I’m always learning and I consider knowledge the most important thing
+          in my life, not only counting the technical side but as a person,
+          always growing with empathy and emotion as best as I can.
         </P>
         <P>
-          Inspiring others is one of my talents, as I’m easily inspired
-          and I try my best to keep learning with enthusiasm. My energy also takes me
+          Inspiring others is one of my talents, as I’m easily inspired and I
+          try my best to keep learning with enthusiasm. My energy also takes me
           to pursuit many other interests, hobbies, and areas of study, such as
           economics, philosophy, math, fitness, and cooking.
         </P>
@@ -151,17 +167,24 @@ const IndexPage = ({ location }) => {
       <Separator id="blog" />
       <BlogSection>
         <H1 as="h2">Blog</H1>
+        <P style={{ marginBottom: '64px' }}>
+          Here I write about things that I like or know, such as web
+          development, career, life and self-improvement.
+        </P>
         <BlogWrapper>
-          {edges.slice(0, 4).map((edge) => (
-            <Post
-              key={edge.node.fields.slug}
-              title={edge.node.frontmatter.title}
-              subtitle={edge.node.frontmatter.subtitle}
-              author={edge.node.frontmatter.author}
-              date={edge.node.frontmatter.date}
-              link={`/blog/${edge.node.fields.slug}`}
-            />
-          )).reverse()}
+          {edges
+            .slice(0, 4)
+            .map((edge) => (
+              <Post
+                key={edge.node.fields.slug}
+                title={edge.node.frontmatter.title}
+                subtitle={edge.node.frontmatter.subtitle}
+                author={edge.node.frontmatter.author}
+                date={edge.node.frontmatter.date}
+                link={`/blog/${edge.node.fields.slug}`}
+              />
+            ))
+            .reverse()}
         </BlogWrapper>
         <Subtitle to="/blog" style={{ marginLeft: '10px', marginTop: '10px' }}>
           See all posts
@@ -171,14 +194,23 @@ const IndexPage = ({ location }) => {
       <ContactSection>
         <TwoWrapper>
           <div className="left">
-            <H1>Contact</H1>
+            <H1>Newsletter</H1>
             <P>
-              I am interested mostly in small/medium freelance opportunities.
-              However, if you need anything else, feel free to also contact me
-              using the form below.
+              Sign up to know when I post something new on my blog! Also for
+              more content and updates.
             </P>
-            <h4 style={{ marginTop: '100px' }}>Coming soon.</h4>
-            {/* <button onClick={handleEmail}>Click me</button> */}
+            <Newsletter onSubmit={handleNewsletter}>
+              <input
+                type="email"
+                onChange={handleChangeEmail}
+                className="newsletter-input"
+                placeholder="Your E-mail here!"
+              />
+              <button type="submit" className="newsletter-button">
+                Subscribe
+              </button>
+            </Newsletter>
+            <P style={{ marginTop: '16px' }}>{newsletterText}</P>
           </div>
           <CenterDivisor />
           {maxLaptop && <Separator id="social" />}

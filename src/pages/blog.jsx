@@ -3,7 +3,7 @@ import { graphql, useStaticQuery } from 'gatsby';
 import Layout from '../components/Layout/Layout';
 import Head from '../components/head';
 import Post from '../components/Post/Post';
-import { H1, BlogWrapper, BlogSection } from '../styles/main';
+import { H1, P, BlogWrapper, BlogSection } from '../styles/main';
 
 const Blog = () => {
   const data = useStaticQuery(graphql`
@@ -34,6 +34,7 @@ const Blog = () => {
       <Head title="Blog" />
       <BlogSection>
         <H1>Blog</H1>
+       <P style={{ marginBottom: '64px' }}>Here I write about things that I like or know, such as web development, career, life and self-improvement.</P>
         <BlogWrapper>
           {data.allMdx.edges.map((edge, index) => (
             <Post
