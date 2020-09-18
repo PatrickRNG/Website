@@ -55,13 +55,17 @@ const Blog = ({ data, pageContext }) => {
       <Info>
         {author} - {date}
       </Info>
-      <Img fluid={cover.childImageSharp.fluid} />
-      <PhotoLegend>{`Photo by ${coverCredit} on ${coverWebsite}`}</PhotoLegend>
+      {cover && (
+        <>
+          <Img fluid={cover.childImageSharp.fluid} />
+          <PhotoLegend>{`Photo by ${coverCredit} on ${coverWebsite}`}</PhotoLegend>
+        </>
+      )}
       <MDXRenderer>{body}</MDXRenderer>
       <Separator width="100%" />
       <EndText>
-        <b className="first">Thanks for reading!</b>Liked the content or
-        just want to send me a message? Follow me on Twitter!
+        <b className="first">Thanks for reading!</b>Liked the content or just
+        want to send me a message? Follow me on Twitter!
       </EndText>
       <TwitterCard
         name="Patrick Passarella"
