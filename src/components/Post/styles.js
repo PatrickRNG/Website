@@ -33,11 +33,11 @@ const Author = styled.p`
   font-weight: bold;
 `;
 
-const Date = styled.span`
+const PublishDate = styled.span`
   font-size: 0.8rem;
   font-weight: bold;
   opacity: 0.55;
   margin-left: 10px;
 `;
 
-export { Title, Subtitle, Author, Date, PostWrapper };
+export { Title, Subtitle, Author, PublishDate, PostWrapper };
