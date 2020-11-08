@@ -34,7 +34,7 @@ const Blog = ({ data, pageContext }) => {
   } = frontmatter;
 
   const formattedDate = format(
-    new window.Date(`${date} 00:00:00`),
+    new Date(`${date} 00:00:00`),
     'do MMM, y'
   );
 
