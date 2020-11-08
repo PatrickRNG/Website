@@ -1,15 +1,15 @@
 ---
 title: 'How to position the Electron tray window on all platforms'
 author: 'Patrick Passarella'
-date: '12th Aug, 2020'
-subtitle: 'Correctly positioning the Electron tray window'
+date: '2020-09-23'
+subtitle: 'Creating an Electron tray app and correctly positioning it on Windows, Linux, and Mac'
 cover: ./cover.jpg
-coverCredit: 'Thao Le Hoang'
+coverCredit: 'Aziz Acharki'
 coverWebsite: 'Unsplash'
-published: false
+published: true
 ---
-
-I've had a hard time trying to have the tray window appear in the correct spot for all platforms since in Linux the `tray.getBounds()` doesn't work.
+  
+I've had a hard time trying to have the tray window appear in the correct spot for all platforms, since in Linux the `tray.getBounds()` doesn't work.
 To solve that, we can use the mouse position for Linux, and the `tray.getBounds()` for windows and mac.
 
 First, let's create an Electron app (I will not enter in details here, just a quick step-by-step list). You can also jump directly to the important part, [here](#creating-the-tray-icon).
@@ -68,7 +68,7 @@ app.on('activate', () => {
 });
 ```
 
-In the `index.html`, I will also be using the same code as the Electron documentation (just an "Hello World").
+In the `index.html`, I will also be using the same code as the Electron documentation (just a "Hello World").
 
 ```html
 <!DOCTYPE html>
@@ -134,9 +134,9 @@ const toggleWindow = () => {
 };
 ```
 
-Now the `showWindow` function, that is being used inside the `toggleWindow`, in this function we will correctly position the window before showing it. For that, we will be using the library [electron-traywindow-positioner](https://github.com/pixtron/electron-traywindow-positioner), which has everything built in to position the tray icon for all platforms, using the mouse position for Linux, and the tray bounds for windows and mac.
+That `showWindow` function, which is being used inside the `toggleWindow`, is the function that will correctly position the window before showing it. For that, we will be using the library [electron-traywindow-positioner](https://github.com/pixtron/electron-traywindow-positioner), which has everything built in to position the tray icon for all platforms, using the mouse position for Linux, and the tray bounds for windows and mac.
 
-Install the library `$ yarn add electron-traywindow-positioner` and import it. After calling the positioner.position, it will change the position of the window, so you can just show it right after with `window.show()`.
+Install the library `$ yarn add electron-traywindow-positioner` and import it. After calling the `positioner.position`, it will change the position of the window, so you can just show it using `window.show()`.
 
 ```js
 const positioner = require('electron-traywindow-positioner');
@@ -147,7 +147,7 @@ const showWindow = () => {
 };
 ```
 
-Add a click handler to the tray, that will call that function.
+Then, add a click handler to the tray, which will call that function.
 
 ```js
 const createTray = () => {
@@ -158,5 +158,70 @@ const createTray = () => {
 };
 ```
 
-Now, every time you click the tray icon, it will toggle the window, and with the correct position!
+Now, every time you click the tray icon, it will toggle the window, and with the correct position!  
+Here is the full code in the `main.js` file.
+
+```js
+const { app, BrowserWindow, Tray } = require('electron');
+const positioner = require('electron-traywindow-positioner');
+const path = require('path');
+
+let window = null;
+let tray = null;
+
+const showWindow = () => {
+  positioner.position(window, tray.getBounds());
+  window.show();
+};
+
+const toggleWindow = () => {
+  if (window.isVisible()) return window.hide();
+  return showWindow();
+};
+
+const createTray = () => {
+  tray = new Tray(path.join(__dirname, 'assets', 'drop.png'));
+  tray.on('click', () => {
+    toggleWindow();
+  });
+};
+
+const createWindow = () => {
+  // Create the browser window.
+  window = new BrowserWindow({
+    width: 800,
+    height: 600,
+    show: false,
+    webPreferences: {
+      nodeIntegration: true,
+    },
+  });
+
+  // and load the index.html of the app.
+  window.loadFile('index.html');
+
+  // Open the DevTools.
+  window.webContents.openDevTools({ mode: 'detach' });
+};
+
+app.on('ready', () => {
+  createWindow();
+  createTray();
+});
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
+
+app.on('activate', () => {
+  // On macOS it's common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow();
+  }
+});
+```
+
 That's it, very simple, but it's something that took me some time to find a great and simple solution.

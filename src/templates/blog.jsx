@@ -1,4 +1,5 @@
 import React from 'react';
+import { format } from 'date-fns';
 import { graphql } from 'gatsby';
 import { MDXRenderer } from 'gatsby-plugin-mdx';
 import Img from 'gatsby-image';
@@ -32,6 +33,11 @@ const Blog = ({ data, pageContext }) => {
     coverWebsite,
   } = frontmatter;
 
+  const formattedDate = format(
+    new window.Date(`${date} 00:00:00`),
+    'do MMM, y'
+  );
+
   return (
     <Layout contentStyle={{ maxWidth: '1032px', padding: '0 1.5rem' }}>
       <SEO
@@ -47,13 +53,13 @@ const Blog = ({ data, pageContext }) => {
         twitterUsername={twitterUsername}
         author={author}
         article={true}
-        publishedDate={date}
+        publishedDate={new Date(date)}
         modifiedDate={new Date(Date.now()).toISOString()}
       />
       <Title>{title}</Title>
       <Subtitle>{subtitle}</Subtitle>
       <Info>
-        {author} - {date}
+        {author} - {formattedDate}
       </Info>
       {cover && (
         <>
@@ -64,14 +70,14 @@ const Blog = ({ data, pageContext }) => {
       <MDXRenderer>{body}</MDXRenderer>
       <Separator width="100%" />
       <EndText>
-        <b className="first">Thanks for reading!</b>Liked the content or just
+        <b className="first">Thanks for reading!</b>Enjoyed the content or just
         want to send me a message? Follow me on Twitter!
       </EndText>
       <TwitterCard
         name="Patrick Passarella"
         username={twitterUsername}
         url={twitter}
-        image="https://pbs.twimg.com/profile_images/1252658694497714177/dRQCSTad_400x400.jpg"
+        image="https://pbs.twimg.com/profile_images/1313444737647554560/_6V8ahxX_400x400.jpg"
       />
     </Layout>
   );

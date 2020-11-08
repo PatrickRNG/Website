@@ -92,8 +92,8 @@ const IndexPage = ({ location }) => {
       }
       return setNewsletterText('Some error ocurred, unable to subscribe');
     }
-    
-    setNewsletterText('Thank you for subscribing! Have a great day')
+
+    setNewsletterText('Thank you for subscribing! Have a great day');
   };
 
   const handleChangeEmail = (e) => {
@@ -172,19 +172,16 @@ const IndexPage = ({ location }) => {
           development, career, life and self-improvement.
         </P>
         <BlogWrapper>
-          {edges
-            .slice(0, 4)
-            .map((edge) => (
-              <Post
-                key={edge.node.fields.slug}
-                title={edge.node.frontmatter.title}
-                subtitle={edge.node.frontmatter.subtitle}
-                author={edge.node.frontmatter.author}
-                date={edge.node.frontmatter.date}
-                link={`/blog/${edge.node.fields.slug}`}
-              />
-            ))
-            .reverse()}
+          {edges.slice(0, 4).map((edge) => (
+            <Post
+              key={edge.node.fields.slug}
+              title={edge.node.frontmatter.title}
+              subtitle={edge.node.frontmatter.subtitle}
+              author={edge.node.frontmatter.author}
+              date={edge.node.frontmatter.date}
+              link={`/blog/${edge.node.fields.slug}`}
+            />
+          ))}
         </BlogWrapper>
         <Subtitle to="/blog" style={{ marginLeft: '10px', marginTop: '10px' }}>
           See all posts

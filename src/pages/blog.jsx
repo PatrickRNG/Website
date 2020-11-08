@@ -34,7 +34,10 @@ const Blog = () => {
       <Head title="Blog" />
       <BlogSection>
         <H1>Blog</H1>
-       <P style={{ marginBottom: '64px' }}>Here I write about things that I like or know, such as web development, career, life and self-improvement.</P>
+        <P style={{ marginBottom: '64px' }}>
+          Here I write about things that I like or know, such as web
+          development, career, life and self-improvement.
+        </P>
         <BlogWrapper>
           {data.allMdx.edges.map((edge, index) => (
             <Post
@@ -45,7 +48,7 @@ const Blog = () => {
               date={edge.node.frontmatter.date}
               link={`/blog/${edge.node.fields.slug}`}
             />
-          )).reverse()}
+          ))}
         </BlogWrapper>
       </BlogSection>
     </Layout>
