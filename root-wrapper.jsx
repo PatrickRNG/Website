@@ -22,7 +22,7 @@ const OrderedList = styled.ol`
   }
 `;
 
-const CodeElement = (props) => <code {...props} style={{ backgroundColor: '#2b2b2b', padding: '0 0.4rem 0.2rem 0.4rem', fontSize: '1rem' }} />
+const CodeElement = (props) => <code {...props} style={{ backgroundColor: '#2b2b2b', padding: '0 0.4rem 0.2rem 0.4rem', fontSize: '1.2rem' }} />
 const createLocalLink = (text) => text.toLowerCase().replace(/\s/g, '-');
 
 const components = {
@@ -48,7 +48,6 @@ const components = {
       );
     }
   },
-  img: ({ src, alt }) => <img src={src} alt={alt} style={{ width: '100%' }} />
 };
 
 export const wrapRootElement = ({ element }) => (

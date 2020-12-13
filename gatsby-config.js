@@ -22,14 +22,18 @@ module.exports = {
   siteMetadata,
   plugins: [
     `gatsby-plugin-react-helmet`,
-    `gatsby-plugin-sharp`,
-    `gatsby-transformer-sharp`,
-    `gatsby-transformer-remark`,
     `gatsby-plugin-styled-components`,
     {
-      resolve: `gatsby-transformer-sharp`,
+      resolve: `gatsby-transformer-remark`,
       options: {
-        checkSupportedExtensions: false,
+        plugins: [
+          {
+            resolve: `gatsby-remark-images`,
+            options: {
+              maxWidth: 1032,
+            },
+          },
+        ],
       },
     },
     {
@@ -45,39 +49,33 @@ module.exports = {
         path: `${__dirname}/src/posts`,
       },
     },
-    `gatsby-remark-images`,
+    {
+      resolve: `gatsby-transformer-sharp`,
+      options: {
+        checkSupportedExtensions: false,
+      },
+    },
     {
       resolve: `gatsby-plugin-mdx`,
       options: {
-        gatsbyRemarkPlugins: [
-          `gatsby-remark-copy-linked-files`,
-          {
-            resolve: `gatsby-remark-images`,
-            options: {
-              maxWidth: 1032,
-              linkImagesToOriginal: false,
-              tracedSVG: true,
-              disableBgImage: true,
-              wrapperStyle: `margin: 30px 0;`,
-            },
-          },
+        plugins: [
+          `gatsby-remark-images`,
         ],
-        plugin: [
+        gatsbyRemarkPlugins: [
           {
             resolve: `gatsby-remark-images`,
             options: {
               maxWidth: 1032,
               linkImagesToOriginal: false,
-              tracedSVG: true,
-              disableBgImage: true,
-              wrapperStyle: 'margin: 30px 0;',
             },
           },
+          `gatsby-remark-copy-linked-files`,
         ],
       },
     },
-    `gatsby-plugin-sass`,
+    `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
+    `gatsby-plugin-sass`,
     {
       resolve: 'gatsby-plugin-zeit-now',
       options: {
@@ -103,7 +101,8 @@ module.exports = {
     {
       resolve: 'gatsby-plugin-mailchimp',
       options: {
-        endpoint: 'https://patrickpassarella.us17.list-manage.com/subscribe/post?u=77ace10819e59c6cb9ca53b5b&amp;id=c014aac34f',
+        endpoint:
+          'https://patrickpassarella.us17.list-manage.com/subscribe/post?u=77ace10819e59c6cb9ca53b5b&amp;id=c014aac34f',
         timeout: 10000,
       },
     },

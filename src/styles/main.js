@@ -161,13 +161,13 @@ export const TwoWrapper = styled.div`
 `;
 
 export const BlogWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
 
   @media ${device.mobileS} and (max-width: 425px) {
     height: 100%;
-    flex-direction: column;
+    display: block;
     min-height: 350px;
   }
 `;

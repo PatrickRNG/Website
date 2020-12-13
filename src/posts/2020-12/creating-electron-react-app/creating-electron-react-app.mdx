@@ -1,0 +1,721 @@
+---
+title: 'Electron and React integration done right'
+author: 'Patrick Passarella'
+date: '2020-12-13'
+subtitle: 'Creating an updated Electron + React app, learning how to communicate between them, and how to build for cross-platform'
+cover: ./cover.jpg
+coverCredit: 'Aziz Acharki'
+coverWebsite: 'Unsplash'
+published: true
+---
+
+In this post, I will show you how to create a full React and Electron app, test, and build it.
+
+Electron is a framework to create cross-platform desktop apps. Ages ago it was mostly being used with plain js and html. Now we can integrate it with React. But I found it kinda troublefull, so I wrote this post to help you create a nice integration between these two great technologies.
+
+If you've never heard of Electron, I guess I can make a small tour.
+
+1. Electron uses Node.js for the back-end development;
+2. Electron uses [Chromium](https://www.chromium.org/Home) for displaying web content;
+3. It also has some custom API's to deal with OS functions.
+
+There are a few reasons to use Electron.
+
+1. To use desktop features (obviously);
+2. To create cross-platform desktop apps more easily (compared to native technologies);
+3. Depending on the app, you can process stuff on the user-side, instead of using your server resources;
+4. Some apps generally work better as a desktop version, for me at least.
+
+Some popular apps developed with Electron are.
+
+1. VScode;
+2. Slack;
+3. Whatsapp.
+
+## React app setup
+
+This isn't the scope of the post, so we will use the simplest possible CRA project.
+
+You can create the project using `$ yarn create react-app my-app` or `$ npm init react-app my-app`. If you have already created a folder, just replace "my-app" with a dot (current folder).
+
+We will also change the folder structure, since it's going to have the electron app in the same project, it would be a mess of files.
+
+Create a `client` (or any name you want) folder in the `src` folder, move everything except the `index.js` and `setupTests.js` (if you're using CRA) to it. Remember to also correct the imports.
+
+That's it for now for the React structure, we will be back to it shortly.
+
+---
+
+## Electron app setup
+
+Now we need to create the Electron part of the app.
+
+First, create a folder, outside of the `src` folder, named `electron`, and a `main.js` file inside it. Change the `main` property in the `package.json` to `electron/main.js`. This will define the main entry point for the app.
+
+After that, add the Electron package to the project, running `$ yarn add electron --dev` and a start script to your `package.json`. In the start script, we also add the environment variable containing the React app url, to access later.
+
+#### package.json
+
+```json
+...
+"main": "electron/main.js",
+"scripts": {
+    "start:electron": "ELECTRON_START_URL=http://localhost:3000 electron ."
+  }
+...
+```
+
+Lastly, the `main.js` content. I will be using the Electron default code, found on their [documentation](https://www.electronjs.org/docs/tutorial/first-app). With just some small tweaks.
+
+#### electron/main.js
+
+```js
+const { app, BrowserWindow } = require('electron');
+const path = require('path');
+
+// Keep a global reference of the window object, if you don't, the window will
+// be closed automatically when the JavaScript object is garbage collected.
+let window = null;
+
+function createWindow() {
+  // Create the browser window.
+  window = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      nodeIntegration: true,
+    },
+  });
+
+  // Load the index.html of the app.
+  // This will give an error for now, since we will be using a React app instead of a file.
+  window.loadFile('index.html');
+
+  // Open the DevTools.
+  window.webContents.openDevTools({ mode: 'detach' });
+}
+
+app.on('ready', () => {
+  createWindow();
+});
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
+
+app.on('activate', () => {
+  // On macOS it's common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow();
+  }
+});
+```
+
+This file is where all the electron code will be. Here, we are creating a window after the app is ready, and adding some functionality, like being able to close the window.
+
+Running `$ yarn start:electron` should open up a blank window, and the devTools.
+
+---
+
+## Integrating both
+
+It's time to show the React app inside the Electron desktop window. For that, it's quite simple, we just render the url instead of the `index.html` file directly.
+
+So, we need to change the `createWindow` function to load the url.
+
+#### electron/main.js
+
+```js
+const createWindow = () => {
+  // Here, we are grabbing the React url from the env (which is on the start script)
+  const startUrl = process.env.ELECTRON_START_URL;
+
+  window = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      nodeIntegration: true,
+    },
+  });
+
+  // And loading it in the window
+  window.loadURL(startUrl);
+  window.show();
+  window.webContents.openDevTools({ mode: 'detach' });
+};
+```
+
+Now your Electron app should load the React app in the window, try it by running `$ yarn start:electron` again.
+
+---
+
+## Communication between React and Electron
+
+Now, another thing left to do, is to learn how to communicate between them. But you may ask, "what do you mean by communication"?, what can we do between Electron and React? The main.js file (the Electron part), is a node application, so you could do anything "back-end" related. You could fetch a database, add a notification system, use the local file-system, and so on. Technically you can use Node APIs inside the Renderer process also, but I don't think that's a good practice.
+
+Electron provides a way to communicate between the main and the renderer (React) process using modules called [ipcMain](https://www.electronjs.org/docs/api/ipc-main) and [ipcRenderer](https://www.electronjs.org/docs/api/ipc-renderer).
+
+Both have a few functions, like `send` and `on`, who are used for asynchronous communication. And `handle` (ipcMain) and `invoke` (ipcRenderer) for synchronous communication.
+
+For the sake of simplicity, we will just send a simple object from one to another, but you could do anything.
+
+Let's look at it step by step.
+
+**1. Defining the channel names**
+
+Create a `shared` folder, inside the `src` folder. In there, is where it's gonna have the code that will be used inside the main and renderer process. So, let's also create a `constants.js` file inside it, where we define our message names.
+
+#### src/shared/constants.js
+
+```js
+module.exports = {
+  channels: {
+    GET_DATA: 'get_data',
+  },
+};
+```
+
+As you can notice, we are using `module.exports` in there, since we are going to use it in electron also.
+
+**2. Creating the action that will send the message to Electron main process**
+
+In the React app, we will change some css, just to open up space. (you can skip this part if you are using it in your own app, obviously). I just deleted some css code, added a button and h3 style, and decentralized the logo vertically.
+
+#### App.css
+
+```css
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App {
+  background-color: #282c34;
+  min-height: 100vh;
+  color: #fff;
+}
+
+input {
+  margin-top: 16px;
+  padding: 8px;
+}
+
+h3 {
+  margin-left: 16px;
+}
+
+.App-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.App-header button {
+  border: none;
+  padding: 10px 20px;
+  background: #777;
+  color: #fff;
+  z-index: 1;
+  margin-top: 16px;
+  cursor: pointer;
+  outline: none;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+```
+
+In the `App.js` file, we will add the button, and the function to send the message.
+
+#### App.js
+
+```jsx
+import logo from './logo.svg';
+import './App.css';
+import { channels } from '../shared/constants';
+
+const { ipcRenderer } = window.require('electron');
+
+function App() {
+  const getData = () => {
+    ipcRenderer.send(channels.GET_DATA, { product: 'notebook' });
+  };
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} width={200} className="App-logo" alt="logo" />
+        <button onClick={getData}>Get data</button>
+      </header>
+    </div>
+  );
+}
+
+export default App;
+```
+
+We need to import the `ipcRenderer` module using `window.require`, because we want to require the electron during runtime from the node environment, rather than the one used during compilation by webpack. link to the github issue [here](https://github.com/electron/electron/issues/7300).
+
+In this file, we import the `ipcRenderer`, and the channels we've created in the constants file. And create a `getData` function, that will be triggered by clicking on the button.
+
+The `send` method from the `ipcRenderer`, receives the channel name as the first parameter, and a optional data that will be sent to the main process.
+
+**3. Receiving the data in the main process**
+
+At the end of the `main.js` file, we need to listen to the `get_data` event, using the `ipcMain` module.
+
+#### electron/main.js
+
+```js
+const { app, BrowserWindow, ipcMain } = require('electron');
+const { channels } = require('../src/shared/constants');
+
+...
+
+// End of the file
+ipcMain.on(channels.GET_DATA, (event, arg) => {
+  const { product } = arg;
+  console.log(product);
+});
+```
+
+The `ipcMain.on` method, also receives the channel as the first parameter, and a function as the second, that function has an `event`, and an `arg` arguments. The `arg` is the data we've sent from the renderer process.
+
+Restart the Electron app, and click the `Get data` button, you should see the data print in the server console.
+
+**4. Sending a response back to the renderer process**
+
+Now we will mock a database call (or a file system), by just returning an object to the renderer process.
+
+```js
+const products = {
+  notebook: {
+    name: 'notebook',
+    price: '2500',
+    color: 'gray',
+  },
+  headphone: {
+    name: 'headphone',
+    price: '700',
+    color: 'black',
+  },
+};
+
+// End of the file
+ipcMain.on(channels.GET_DATA, (event, arg) => {
+  const { product } = arg;
+  event.sender.send(channels.GET_DATA, products[product]);
+});
+```
+
+This will send an event back to the renderer process, for the `get_data` channel.
+
+We also need to change our React app to listen for the event, and show it on screen. We use the `useEffect` hook, to listen to the `get_data` channel. After the response is sent from the main process, it will get that data, and set the state, which will fill the information about the product.
+
+Here is the full file.
+
+#### App.js
+
+```jsx
+import { useState, useEffect } from 'react';
+import logo from './logo.svg';
+import './App.css';
+import { channels } from '../shared/constants';
+
+const { ipcRenderer } = window.require('electron');
+
+function App() {
+  const [product, setProduct] = useState('');
+  const [data, setData] = useState(null);
+
+  const getData = () => {
+    // Send the event to get the data
+    ipcRenderer.send(channels.GET_DATA, { product });
+  };
+
+  useEffect(() => {
+    // Listen for the event
+    ipcRenderer.on(channels.GET_DATA, (event, arg) => {
+      setData(arg);
+    });
+
+    // Clean the listener after the component is dismounted
+    return () => {
+      ipcRenderer.removeAllListeners();
+    };
+  }, []);
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} width={200} className="App-logo" alt="logo" />
+        <input
+          onChange={(e) => setProduct(e.target.value)}
+          placeholder="Product name"
+        />
+        <button onClick={getData}>Search</button>
+      </header>
+
+      {data && (
+        <>
+          <h3>Product info</h3>
+          <ul>
+            <li>Name: {data.name}</li>
+            <li>Price: {data.price}</li>
+            <li>Color: {data.color}</li>
+          </ul>
+        </>
+      )}
+    </div>
+  );
+}
+
+export default App;
+```
+
+![Electron App](./electron_1.jpg 'Electron app')
+
+It seems complicated, but it's quite simple, I'm gonna summarize it for you below.
+
+1. In the React app, we add the `ipcRenderer.send` on an action (or in another way), to notify Electron about something we need, and also add a listener to listen for the respective response using `ipcRenderer.on`.
+2. In the `main` process, we add the listener to listen for the renderer process (React app) events, using `ipcMain.on`, and we can send back the response it is waiting for using `event.sender.send`.
+
+### Isn't it better to just use an api?
+
+Depends, I've used this example here because it's simple, but the main focus is the communication, you can do anything with it. One thing for example that we could do, that is more useful, is an option to quit the app.
+
+#### App.js
+
+```jsx
+...
+
+const handleQuit = () => {
+  ipcRenderer.invoke(channels.QUIT);
+};
+
+return (
+  <nav>
+    <button>Config</button>
+    <button onClick={handleQuit}>Quit app</button>
+  </nav>
+);
+
+```
+
+#### electron/main.js
+
+```js
+...
+
+ipcMain.handle(channels.QUIT, () => {
+  app.quit();
+});
+```
+
+---
+
+## Testing the ipcRenderer with Jest
+
+It took me a few hours to find a way to test it properly, and I don't think I found the perfect way for it, there are some questions on Stackoverflow about it, but it was complicated for me to understand and implement, so I'm gonna just comment on how I tested my Electron apps, even if it isn't the best way to do it.
+
+I'm gonna use the app I created in this post as an example.
+
+First, we need to setup our tests initialization config. Because we use `window.require` to require electron, the tests will scream about it.
+To fix that, I'm gonna add this single-line config in the `setupTests.js` file that `create-react-app` makes available.
+
+#### src/setupTests.js
+
+```js
+window.require = require;
+```
+
+If you're using just Jest, you can add the same config in the `jest.setup.js`, and add the `setupFilesAfterEnv` in the `package.json` or `jest.config.js`, [like that](https://jestjs.io/docs/en/configuration#setupfilesafterenv-array).
+
+Now, we need to mock the `ipcRenderer` used in the React app. In the same file (`setupTests` or `jest.setup.js`), we can use the `jest.mock` to mock the electron package. This function takes the module name, and a factory function (a function that returns an object) containing the module properties we want to mock.
+
+#### src/setupTests.js
+
+```js
+window.require = require;
+
+jest.mock('electron', () => {
+  return {
+    ipcRenderer: {
+      on: jest.fn(),
+      send: jest.fn(),
+      removeAllListeners: jest.fn(),
+    },
+  };
+});
+```
+
+We can now start testing without initial errors. I'm gonna show you the full test file, and then explain some sections later.
+
+#### index.test.js
+
+```jsx
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { act } from 'react-dom/test-utils';
+import { channels } from '../../shared/constants';
+import App from '../App';
+
+const { ipcRenderer } = require('electron');
+
+describe('App component', () => {
+  it('Should search for a product after clicking search', () => {
+    render(<App />);
+    const input = screen.getByRole('textbox');
+    const searchButton = screen.getByRole('button');
+    const product = 'notebook';
+
+    userEvent.type(input, product);
+    userEvent.click(searchButton);
+
+    expect(ipcRenderer.send).toBeCalledWith(channels.GET_DATA, {
+      product,
+    });
+  });
+
+  it('Should render the search result on the page', () => {
+    render(<App />);
+    const mData = {
+      name: 'notebook',
+      price: '2500',
+      color: 'gray',
+    };
+
+    act(() => {
+      ipcRenderer.on.mock.calls[0][1](null, mData);
+    });
+
+    expect(ipcRenderer.on).toBeCalledWith(
+      channels.GET_DATA,
+      expect.any(Function)
+    );
+
+    expect(screen.getByText(/Name/).textContent).toEqual(`Name: ${mData.name}`);
+    expect(screen.getByText(/Price/).textContent).toEqual(
+      `Price: ${mData.price}`
+    );
+    expect(screen.getByText(/Color/).textContent).toEqual(
+      `Color: ${mData.color}`
+    );
+  });
+});
+```
+
+Let's start with the first test
+
+```jsx
+it('Should search for a product after clicking search', () => {
+  // 1
+  render(<App />);
+  const input = screen.getByRole('textbox');
+  const searchButton = screen.getByRole('button');
+  const product = 'notebook';
+
+  // 2
+  userEvent.type(input, product);
+  userEvent.click(searchButton);
+
+  // 3
+  expect(ipcRenderer.send).toBeCalledWith(channels.GET_DATA, {
+    product,
+  });
+});
+```
+
+1. Rendering the component that is being tested, getting the input and search button.
+2. Typing the product name on the input, and hitting search.
+3. Testing if the `ipcRenderer.send` is being called with the right channel and product name typed in the input, after hitting search.
+
+Now, the second test. This one is more tricky, since we need to also mock the `on` method call, and execute it's callback.
+
+```jsx
+it('Should render the search result on the page', () => {
+  // 1
+  render(<App />);
+  const mData = {
+    name: 'notebook',
+    price: '2500',
+    color: 'gray',
+  };
+
+  // 2
+  act(() => {
+    ipcRenderer.on.mock.calls[0][1](null, mData);
+  });
+
+  // 3
+  expect(ipcRenderer.on).toBeCalledWith(
+    channels.GET_DATA,
+    expect.any(Function)
+  );
+
+  // 4
+  expect(screen.getByText(/Name/).textContent).toEqual(`Name: ${mData.name}`);
+  expect(screen.getByText(/Price/).textContent).toEqual(
+    `Price: ${mData.price}`
+  );
+  expect(screen.getByText(/Color/).textContent).toEqual(
+    `Color: ${mData.color}`
+  );
+});
+```
+
+1. Rendering the component that is being tested, and creating an object to mock the returned data.
+2. In the App component, the `ipcRenderer.on` is called on the `useEffect` hook, so we can already access its properties, `ipcRenderer.on.mock.calls` is accessing all the calls made, it returns something like this `[ [ 'get_data', [Function] ] ]`, which is the arguments passed to it, including the callback, in this case, I'm getting that callback and firing it, that way, it will also call the `setData`.
+3. Testing if the `ipcRenderer.on` is being called with the right channel and a callback function.
+4. Testing if the product information is rendered correctly on the page, and with the right data.
+
+I hope it's all clear. Another thing it's important to say, is that, technically, we shouldn't test implementations, only the UI like it's the user who is using the app. But with Electron, it's hard to test like that, since we have that communication between them.
+
+---
+
+## Building for Linux and Windows
+
+Electron most powerful feature is being able to build for cross-platform easily. But, not so much with React, it's more verbose and needs some weird configuration.
+
+I'll start by installing the library [electron-builder](https://www.electron.build/). And back again with the step-by-step process.
+
+**1. Configuring the package.json**
+
+We need to add two new properties to the `package.json` file, `build` and `homepage`. `build` have some general configuration, and `homepage` is the path for the built app to be served from a subdirectory, React sets the root path based on this setting.
+
+#### package.json
+
+```json
+...
+"homepage": "./",
+"build": {
+    "productName": "Sample App",
+    "appId": "com.company.sample-app",
+    "files": [
+      "build/**/*",
+      "node_modules/**/*",
+      "dist/",
+      "package.json"
+    ],
+    "directories": {
+      "output": "release"
+    }
+  }
+```
+
+**productName:** The name that will be shown on the executable.
+**appId:** Necessary if building for mac.
+**files:** Specifies which resource files to include when creating the package.
+**directories:**The platform executable output folder.
+
+We also need to add the packing scripts, to build React, Electron, and use `electron-builder` to build it.
+
+#### package.json
+
+```json
+"scripts": {
+    "build:client": "react-scripts build",
+    "build:electron": "rm -rf build/src build/shared && mkdir build/src && cp -r electron/. build/electron && cp -r src/shared/. build/src/shared",
+    "build:electron-win": "rm -rf build/src build/shared && mkdir build/src && robocopy electron build/electron /S & robocopy src/shared build/src/shared /S",
+    "pack:linux": "electron-builder -c.extraMetadata.main=build/electron/main.js --publish never",
+    "pack:windows": "electron-builder --win -c.extraMetadata.main=build/electron/main.js --publish never",
+  },
+```
+
+**build:client:** Build the React app normally.  
+**build:electron:** Here, I'm copying the `electron` and the `src/shared` folder to the build folder. We do that because we need to access this from the `react-builder` later'.
+**build:electron-win:** The same as the `build:electron`, except that it's a script for windows.
+
+**pack:linux:** Executing `electron-builder` to build electron. Here I needed to use the `-c.extraMetadata.main` property, to change the `package.json` `main` property to `build/electron/main.js`, to point to the correct build files which we moved in the script before.
+**pack:windows:** The same as the `pack:linux`, except that it's to build for windows. Notice the `--win` flag.
+
+**2. Rendering the compiled react code for production**
+
+For running the project locally, we render the React app url into Electron, but for production, we will use the compiled react app, which is the `index.html` file located in the build folder.
+
+It's just some adjustments in the `main.js` file.
+
+#### electron/main.js
+
+```js
+const url = require('url');
+const createWindow = () => {
+  const startUrl =
+    process.env.ELECTRON_START_URL ||
+    url.format({
+      pathname: path.join(__dirname, '../index.html'),
+      protocol: 'file:',
+      slashes: true,
+    });
+
+  window = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      nodeIntegration: true,
+    },
+  });
+
+  window.loadURL(startUrl);
+  window.show();
+  window.webContents.openDevTools({ mode: 'detach' });
+};
+```
+
+As you can see, I just added the index.html path when there is no `ELECTRON_START_URL` env. The `path.join(__dirname, '../index.html')` grabs the index.html path, because the main entry point (the `main` property from `package.json`) is `build/electron/main.js` file, doing a `../index.html` will get it from the build folder.
+
+**3. Creating the executable**
+To create the executable, I choose to use Docker. The reason, is that we need different setups for each operating system without it. For example, Linux building for windows would require you to install Wine.
+
+#### Building for Linux
+
+Just run this (very big) docker script, and it will run this docker image in your local machine.
+
+```
+docker run --rm -ti \
+ --env-file <(env | grep -iE 'DEBUG|NODE_|ELECTRON_') \
+ --env ELECTRON_CACHE="/root/.cache/electron" \
+ --env ELECTRON_BUILDER_CACHE="/root/.cache/electron-builder" \
+ -v ${PWD}:/project \
+ -v ${PWD##*/}-node-modules:/project/node_modules \
+ -v ~/.cache/electron:/root/.cache/electron \
+ -v ~/.cache/electron-builder:/root/.cache/electron-builder \
+ electronuserland/builder
+```
+
+Inside Docker, run `$ yarn && yarn pack:linux`.  
+After that, a `release` folder (which is the folder we defined in the `build` property inside `package.json`) will be created in the project root, which will have the app in `AppImage` or `.deb` format for Linux.
+
+#### Building for Windows
+
+It's almost the same thing, except that we need another image, for Linux we are using `electronuserland/builder`, and for Windows we need the `electronuserland/builder:wine`, which has Wine installed within it.
+
+```
+docker run --rm -ti \
+ --env-file <(env | grep -iE 'DEBUG|NODE_|ELECTRON_') \
+ --env ELECTRON_CACHE="/root/.cache/electron" \
+ --env ELECTRON_BUILDER_CACHE="/root/.cache/electron-builder" \
+ -v ${PWD}:/project \
+ -v ${PWD##*/}-node-modules:/project/node_modules \
+ -v ~/.cache/electron:/root/.cache/electron \
+ -v ~/.cache/electron-builder:/root/.cache/electron-builder \
+ electronuserland/builder:wine
+```
+Inside Docker, run `$ yarn && yarn pack:windows`.  
+The same `release` folder will be created, but with Windows .exe executable.
+
+**You can check out more about building with Docker for other platforms in the [electron-builder documentation](https://www.electron.build/multi-platform-build#docker)**
+
+---
+
+If everything occurred right, you should have a working Electron + React app to share!
