@@ -148,7 +148,7 @@ const createWindow = () => {
 };
 ```
 
-Now your Electron app should load the React app in the window, try it by running `$ yarn start:electron` again.
+Now your Electron app should load the React app in the window, try it by running `$ yarn start` (I renamed it to `start:client`) to start the React app, and `$ yarn start:electron` again to show the window.
 
 ---
 
@@ -583,6 +583,26 @@ I hope it's all clear. Another thing it's important to say, is that, technically
 
 ---
 
+## Adding a script to start both Electron and React simultanesly
+
+As you noticed, we need to start both React (with `yarn start:client`) and Electron (with `yarn start:electron`). And, we need to always start the React app first.
+We can do something to solve that, and make it easier for someone to start the app.
+
+Run `$ yarn add --dev concurrently wait-on cross-env`, to install those required dependencies. Then, change your start script in the `package.json` file.
+
+#### package.json
+
+```json
+"scripts": {
+  "start": "concurrently  \"cross-env BROWSER=none PORT=3000 react-scripts start\" \"wait-on http://localhost:3000 && ELECTRON_START_URL=http://localhost:3000 electron .\""
+  ...
+}
+```
+
+We use the `concurrently` to run two scripts at once, the `wait-on` to wait for the React app to load, and the `cross-env` is used to being able to use the same env for any platform, in one command.
+
+That's it, now you only need to run one command to start your app.
+
 ## Building for Linux and Windows
 
 Electron most powerful feature is being able to build for cross-platform easily. But, not so much with React, it's more verbose and needs some weird configuration.
@@ -711,6 +731,7 @@ docker run --rm -ti \
  -v ~/.cache/electron-builder:/root/.cache/electron-builder \
  electronuserland/builder:wine
 ```
+
 Inside Docker, run `$ yarn && yarn pack:windows`.  
 The same `release` folder will be created, but with Windows .exe executable.
 
