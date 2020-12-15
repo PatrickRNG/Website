@@ -11,6 +11,18 @@ published: true
 
 In this post, I will show you how to create a full React and Electron app, test, and build it.
 
+### Summary
+
+- [React app setup](#react-app-setup)
+- [Electron app setup](#electron-app-setup)
+- [Integrating both](#integrating-both)
+- [Communication between React and Electron](#communication-between-react-and-electron)
+- [Testing the ipcRenderer with Jest](#testing-the-ipcrenderer-with-jest)
+- [Adding a script to start both Electron and React simultanesly](#adding-a-script-to-start-both-electron-and-react-simultanesly)
+- [Building for cross-platform](#building-for-cross-platform)
+
+## Introduction
+
 Electron is a framework to create cross-platform desktop apps. Ages ago it was mostly being used with plain js and html. Now we can integrate it with React. But I found it kinda troublefull, so I wrote this post to help you create a nice integration between these two great technologies.
 
 If you've never heard of Electron, I guess I can make a small tour.
@@ -603,7 +615,7 @@ We use the `concurrently` to run two scripts at once, the `wait-on` to wait for 
 
 That's it, now you only need to run one command to start your app.
 
-## Building for Linux and Windows
+## Building for cross-platform
 
 Electron most powerful feature is being able to build for cross-platform easily. But, not so much with React, it's more verbose and needs some weird configuration.
 
