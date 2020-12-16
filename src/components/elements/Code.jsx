@@ -4,6 +4,10 @@ import theme from 'prism-react-renderer/themes/oceanicNext';
 import styled from 'styled-components';
 import { copyToClipboard } from '../../utils/copy';
 
+const Wrapper = styled.div`
+  position: relative;
+`;
+
 const Pre = styled.pre`
   position: relative;
   text-align: left;
@@ -30,16 +34,18 @@ const LineNo = styled.span`
 
 const CopyCode = styled.button`
   position: absolute;
-  right: .25em;
+  right: 0.1rem;
+  top: 0.45rem;
+  z-index: 2;
   border: 0;
   border-radius: 3px;
-  margin: .25em .5em;
+  margin: 0.25em 0.5em;
   opacity: 0.3;
   cursor: pointer;
-  transition: .15s;
+  transition: 0.15s;
 
   &:hover {
-    opacity: .5;
+    opacity: 0.5;
   }
 `;
 
@@ -54,17 +60,19 @@ const Code = ({ codeString, language, ...props }) => {
       theme={theme}
     >
       {({ className, style, tokens, getLineProps, getTokenProps }) => (
-        <Pre className={className} style={style}>
+        <Wrapper>
           <CopyCode onClick={handleCopy}>Copy</CopyCode>
-          {tokens.map((line, i) => (
-            <div {...getLineProps({ line, key: i })}>
-              <LineNo>{i + 1}</LineNo>
-              {line.map((token, key) => (
-                <span {...getTokenProps({ token, key })} />
-              ))}
-            </div>
-          ))}
-        </Pre>
+          <Pre className={className} style={style}>
+            {tokens.map((line, i) => (
+              <div {...getLineProps({ line, key: i })}>
+                <LineNo>{i + 1}</LineNo>
+                {line.map((token, key) => (
+                  <span {...getTokenProps({ token, key })} />
+                ))}
+              </div>
+            ))}
+          </Pre>
+        </Wrapper>
       )}
     </Highlight>
   );
