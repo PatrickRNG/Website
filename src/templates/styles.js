@@ -28,10 +28,11 @@ export const PhotoLegend = styled.p`
 export const EndText = styled.div`
   margin: 2.5rem 0;
   text-align: center;
-  fontSize: 1.3rem;
-  fontFamily: 'PT Serif, serif';
+  font-size: 1.3rem;
+  font-family: 'PT Serif', serif;
 
   & .first {
+    font-family: 'PT Serif', serif;
     display: block;
     margin-bottom: 8px;
   }
