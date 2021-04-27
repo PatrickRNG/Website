@@ -46,7 +46,7 @@ const Table = styled.table`
 `;
 
 const CodeElement = (props) => <code {...props} style={{ backgroundColor: '#2b2b2b', padding: '0 0.4rem 0.2rem 0.4rem', fontSize: '1.2rem' }} />
-const createLocalLink = (text) => text.toLowerCase().replace(/\s/g, '-');
+const createLocalLink = (text) => String(text).toLowerCase().replace(/\s/g, '-');
 
 const components = {
   h1: ({ children }) => <h1 id={createLocalLink(children)} style={{ fontSize: '2.5rem', marginBottom: '1.8rem' }}>{children}</h1>,

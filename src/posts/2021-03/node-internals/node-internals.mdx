@@ -6,7 +6,7 @@ subtitle: 'WADM is a formula to make mathematically better decisions based on fa
 cover: ./cover.jpg
 coverCredit: 'Piotr Makowski'
 coverWebsite: 'Unsplash'
-published: true
+published: false
 ---
 
 # Scope
@@ -53,15 +53,15 @@ These two last stages operate within the just-in-time (JIT) paradigm.
 
 To execute any program, the computer must translate the code to machine language. There are a few ways to do that.
 
-### **Interpreter:**
+### Interpreter:
 
 Translates and then executes, line by line. Has fast translation (easy) and slow execution;
 
-### **Compiler:**
+### Compiler:
 
 Compile all the code to machine code at once before executing it. Slow translation (complex), but fast execution.
 
-### **JIT (Just in Time) compilation:**
+### JIT (Just in Time) compilation:
 
 Compilation at run time. Combine the best parts from both interpreter and compiler, making translation and execution fast.
 The code is run through an interpreter (Ignition), and during execution it keeps track of code segments that can be reused where possible, and others that can be used to make optimizations based on assumptions (TurboFan).
@@ -78,12 +78,12 @@ A thread is something which is associated to an instance of each program we run,
 
 There are two types of threads.
 
-### **Single Thread**
+### Single Thread
 
 Only one piece of code can be executed at a time.
 For instance, if multiple requests are sent to a server, the next one needs to wait for the current one to send back a response to be processed.
 
-### **Multi Thread**
+### Multi Thread
 
 Multiple pieces of code can be executed at the same time, in parallel.
 Each request sent to a server simultaneously will create a new thread to process it.
@@ -100,7 +100,7 @@ Instead of waiting for the process to complete, it sends it to a “worker”, a
 
 ## Examples
 
-### **Blocking**
+### Blocking
 
 ```js
 const content = fs.readFileSync('path'); // 1
@@ -114,7 +114,7 @@ console.log('Executed'); // 3
 
 The last `console.log` is totally independent of the file read operation, it doesn't need its result, but even then, it needs to wait for it to complete before executing.
 
-### **Non-blocking**
+### Non-blocking
 
 ```js
 fs.readFile('path', (content) => {
