@@ -139,12 +139,12 @@ const IndexPage = ({ location }) => {
       <AboutSection>
         <H1 as="h2">About me</H1>
         <P>
-          I'm Patrick Passarella, an fullstack web developer based on Brazil.
+          I'm Patrick Passarella, a full-stack web developer based in Brazil.
         </P>
         <P>
-          I’ve always been in the technology side since I was a kid, studying
+          I’ve always been on the technology side since I was a kid, studying
           pretty much anything related to that in the course of my life and
-          career, like game-development, 3D modeling, animation, music, motion
+          career, like game development, 3D modeling, animation, music, motion
           design, and UI/UX, I consider myself as a fast learner, picking up new
           skills with relative ease. Today my focus is mostly web-related.
         </P>
@@ -160,7 +160,7 @@ const IndexPage = ({ location }) => {
           economics, philosophy, math, fitness, and cooking.
         </P>
         <P>
-          Currently I work in a full-time job and interested in
+          Currently, I work in a full-time job and am interested in
           entrepreneurship, but also looking for some freelancing.
         </P>
       </AboutSection>

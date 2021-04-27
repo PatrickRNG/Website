@@ -1,0 +1,156 @@
+---
+title: 'Making better decisions with the WADM'
+author: 'Patrick Passarella'
+date: '2021-01-07'
+subtitle: 'WADM is a formula to make mathematically better decisions based on factors that matter'
+cover: ./cover.jpg
+coverCredit: 'Piotr Makowski'
+coverWebsite: 'Unsplash'
+published: true
+---
+
+# Scope
+
+**First of all, what does _node internals_ means?**
+Node internals is the structure of Node, how does it works, why it works like that, what technologies are involved, things like that.
+
+In this post, I will talk about some of the core technologies Node is composed, a more top-down perspective on how they work, and some additional info that may help you understand some more about Node.
+
+**More specifically:**
+
+- V8 Engine
+- JIT Paradigm
+- Non-blocking I/O
+- Libuv
+- Event Loop
+- Generators
+- Async Await
+
+This is not an advanced post, actually, it's the other way around, a post for you to finally understand the basics of how Node works.
+
+# Why
+
+Why learn node internals?
+First, knowledge is always welcomed, specially if it will make a big change on your technical thinking skills, and this is the case. Second, understanding how things work, will make you develop better, and find and fix bugs easier.
+
+# V8 Engine
+
+We need to start talking about V8, because almost everything is related to it.
+
+V8 is an engine created by Google, written in C++, that compiles JavaScript source code to native machine code at runtime. It was created to optimize javascript execution inside browsers.
+
+Javascript is an "interpreted" language, but the v8 **compiles** the code and optimizes the execution, allowing the execution to be done on top of the compiled code.
+
+**Javascript execution in V8 is divided into three stages:**
+
+- **Source to syntax tree:** The parser generates an abstract syntax tree (AST) from the source code;
+- **Syntax tree to bytecode:** V8 _Ignition_ generates bytecode from the syntax tree;
+- **Bytecode to machine code:** V8 _TurboFan_ generates a graph from bytecode, replacing sections of bytecode with machine code.
+
+These two last stages operate within the just-in-time (JIT) paradigm.
+
+# JIT paradigm
+
+To execute any program, the computer must translate the code to machine language. There are a few ways to do that.
+
+### **Interpreter:**
+
+Translates and then executes, line by line. Has fast translation (easy) and slow execution;
+
+### **Compiler:**
+
+Compile all the code to machine code at once before executing it. Slow translation (complex), but fast execution.
+
+### **JIT (Just in Time) compilation:**
+
+Compilation at run time. Combine the best parts from both interpreter and compiler, making translation and execution fast.
+The code is run through an interpreter (Ignition), and during execution it keeps track of code segments that can be reused where possible, and others that can be used to make optimizations based on assumptions (TurboFan).
+
+The main problem the interpreter have is that if you pass the same line of code 10 times, it will translate 10 times. JIT tries to avoid retranslations.
+
+The JIT compiler can expose overhead memory consumption. **Ignition** addresses this by achieving three objectives: reducing memory usage, reducing startup time, and reducing complexity. All three objectives are accomplished by compiling AST to bytecode and collecting feedback during program execution.
+
+# Threads
+
+Some info about threads, which is commonly confused by people.
+
+A thread is something which is associated to an instance of each program we run, it's an operation that our cpu needs to perform.
+
+There are two types of threads.
+
+### **Single Thread**
+
+Only one piece of code can be executed at a time.
+For instance, if multiple requests are sent to a server, the next one needs to wait for the current one to send back a response to be processed.
+
+### **Multi Thread**
+
+Multiple pieces of code can be executed at the same time, in parallel.
+Each request sent to a server simultaneously will create a new thread to process it.
+
+Javascript/Node being single-threaded does not mean it needs to wait for a request to be done, and also doesn't mean that it doesn't use threads internally.
+
+# Non-blocking I/O
+
+Since JavaScript execution in Node.js is single threaded, it is possible to start an I/O process, but not block non-dependent tasks, it means that it can just start the communication, and continue to process other tasks that don’t need the I/O response, if a task needs the response, it will wait for it and then execute a callback. It helps parallel execution and the use of resources.
+
+## How is it done?
+
+Instead of waiting for the process to complete, it sends it to a “worker”, and frees the thread, while it is processing the data, the thread can process another task.
+
+## Examples
+
+### **Blocking**
+
+```js
+const content = fs.readFileSync('path'); // 1
+
+console.log(content); // 2
+console.log('Executed'); // 3
+
+// The file content
+// Executed
+```
+
+The last `console.log` is totally independent of the file read operation, it doesn't need its result, but even then, it needs to wait for it to complete before executing.
+
+### **Non-blocking**
+
+```js
+fs.readFile('path', (content) => {
+  console.log(content);
+});
+
+console.log('Executed');
+
+// Executed
+// The file content
+```
+
+In this case, the last `console.log` is executed first, which is great, because again, it doesn't need the file read result, so it doesn't make sense to wait for it.
+This is done because Node throws the process to the "worker", and while it is doing its work, Node goes to execute the second task, which is the `console.log('Executed')`.
+
+# Libuv
+
+Libuv is an open source library written in C, that uses a thread-pool (multi-thread) to manage parallel operations.
+
+So, what are those _workers_ I have been talking about? Well, they are part of Libuv.
+Workers are non-blocking async I/O processes in background managed by Libuv. Each sync I/O operation they receive from the event loop is run on a background thread, to not block the main thread.
+
+Libuv also provides the **event loop**, where it was made to be tied with only a single thread. You can run multiple event loops, but it must be one per thread.
+Inside Libuv, there are a lot of concepts, like handles, who are abstractions to some resources like TCP/UDP and signals. There’s also handles to interact with the event loop, like `idle`, `prepare`, `check`, and some async types. Each one serves to do a specific action with the event loop, such as run something before or after Libuv does an I/O polling for example.
+
+Also, some modules from Node comes from Libuv, like the `fs` and `child_process` module.
+
+## Async File I/O
+
+When a task for something like a file I/O is put in the call stack, the event loop sends it to the Libuv thread pool, when the data is processed, it puts it in the **Task Queue**, for the event loop to call when it is available.
+
+## Network I/O
+
+The thread pool is bypassed completely when executing low-level OS operations, like a REST api call. Libuv nor node handle these. Instead, there’s something called OS Async Helpers, where the operations are executed immediately as soon as a CPU is available.
+
+After the task is done, it puts the callback into the **Job Queue**, for the event loop to call after the call stack is empty.
+
+All network I/O are performed on sockets which are polled using epoll/kqueue/IOCP (system event interfaces).
+
