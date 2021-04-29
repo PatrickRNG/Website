@@ -31,7 +31,7 @@ This is not an advanced post, actually, it's the other way around, a post for yo
 # Why
 
 Why learn node internals?
-First, knowledge is always welcomed, specially if it will make a big change on your technical thinking skills, and this is the case. Second, understanding how things work, will make you develop better, and find and fix bugs easier.
+First, knowledge is always welcomed, especially if it will make a big change in your technical thinking skills, and this is the case. Second, understanding how things work, will make you develop better, and find and fix bugs easier.
 
 # V8 Engine
 
@@ -64,7 +64,7 @@ Compile all the code to machine code at once before executing it. Slow translati
 ### JIT (Just in Time) compilation:
 
 Compilation at run time. Combine the best parts from both interpreter and compiler, making translation and execution fast.
-The code is run through an interpreter (Ignition), and during execution it keeps track of code segments that can be reused where possible, and others that can be used to make optimizations based on assumptions (TurboFan).
+The code is run through an interpreter (Ignition), and during execution, it keeps track of code segments that can be reused where possible, and others that can be used to make optimizations based on assumptions (TurboFan).
 
 The main problem the interpreter have is that if you pass the same line of code 10 times, it will translate 10 times. JIT tries to avoid retranslations.
 
@@ -74,7 +74,7 @@ The JIT compiler can expose overhead memory consumption. **Ignition** addresses 
 
 Some info about threads, which is commonly confused by people.
 
-A thread is something which is associated to an instance of each program we run, it's an operation that our cpu needs to perform.
+A thread is something that is associated with an instance of each program we run, it's an operation that our CPU needs to perform.
 
 There are two types of threads.
 
@@ -92,7 +92,7 @@ Javascript/Node being single-threaded does not mean it needs to wait for a reque
 
 # Non-blocking I/O
 
-Since JavaScript execution in Node.js is single threaded, it is possible to start an I/O process, but not block non-dependent tasks, it means that it can just start the communication, and continue to process other tasks that don’t need the I/O response, if a task needs the response, it will wait for it and then execute a callback. It helps parallel execution and the use of resources.
+Since JavaScript execution in Node.js is single-threaded, it is possible to start an I/O process, but not block non-dependent tasks, it means that it can just start the communication, and continue to process other tasks that don’t need the I/O response, if a task needs the response, it will wait for it and then execute a callback. It helps parallel execution and the use of resources.
 
 ## How is it done?
 
@@ -132,13 +132,13 @@ This is done because Node throws the process to the "worker", and while it is do
 
 # Libuv
 
-Libuv is an open source library written in C, that uses a thread-pool (multi-thread) to manage parallel operations.
+Libuv is an open-source library written in C, that uses a thread-pool (multi-thread) to manage parallel operations.
 
 So, what are those _workers_ I have been talking about? Well, they are part of Libuv.
-Workers are non-blocking async I/O processes in background managed by Libuv. Each sync I/O operation they receive from the event loop is run on a background thread, to not block the main thread.
+Workers are non-blocking async I/O processes in the background managed by Libuv. Each sync I/O operation they receive from the event loop is run on a background thread, to not block the main thread.
 
 Libuv also provides the **event loop**, where it was made to be tied with only a single thread. You can run multiple event loops, but it must be one per thread.
-Inside Libuv, there are a lot of concepts, like handles, who are abstractions to some resources like TCP/UDP and signals. There’s also handles to interact with the event loop, like `idle`, `prepare`, `check`, and some async types. Each one serves to do a specific action with the event loop, such as run something before or after Libuv does an I/O polling for example.
+Inside Libuv, there are a lot of concepts, like handles, who are abstractions to some resources like TCP/UDP and signals. There are also handles to interact with the event loop, like `idle`, `prepare`, `check`, and some async types. Each one serves to do a specific action with the event loop, such as run something before or after Libuv does I/O polling for example.
 
 Also, some modules from Node comes from Libuv, like the `fs` and `child_process` module.
 
@@ -148,9 +148,184 @@ When a task for something like a file I/O is put in the call stack, the event lo
 
 ## Network I/O
 
-The thread pool is bypassed completely when executing low-level OS operations, like a REST api call. Libuv nor node handle these. Instead, there’s something called OS Async Helpers, where the operations are executed immediately as soon as a CPU is available.
+The thread pool is bypassed completely when executing low-level OS operations, like a REST API call. Libuv nor node handle these. Instead, there’s something called OS Async Helpers, where the operations are executed immediately as soon as a CPU is available.
 
 After the task is done, it puts the callback into the **Job Queue**, for the event loop to call after the call stack is empty.
 
 All network I/O are performed on sockets which are polled using epoll/kqueue/IOCP (system event interfaces).
 
+# Event Loop
+
+We can think about the event loop like someone who sends tasks to the right places, for example, if it gets a task, it will get it from the call stack, see if it can be run on the system primitive (kqueue, epoll), if yes, it will send to it and them get back the response after it’s done, if not, it will send to a background worker. So it’s literally just “communication”.
+
+But in the middle of all that communication, it also manages a lot of other stuff, like timers, and other callbacks.
+
+![Event Loop](./event_loop_1.png 'Event loop')
+
+The event loop is what allows Node.js to perform non-blocking I/O operations, by offloading operations to the system kernel whenever possible. The event loop will go through a phase, execute the callbacks related to that phase, and then move to the next one. Each phase has a callback queue. Depending on the task, it will send it to the corresponding queue.
+
+When Node.js starts, it initializes the event loop, processes the script, then begins processing the event loop.
+The loop only stops when there are no more tasks queued in the event loop or in the call stack.
+
+## Phases
+
+**timers:** Executes callbacks scheduled by setTimeout() and setInterval().
+
+**pending callbacks:** Executes callbacks for some system operations.
+
+**idle, prepare:** Libuv handles, idle will run the given callbacks once per loop iteration, prepare runs before libuv does its I/O polling.
+
+**poll:** Retrieve new I/O events and execute I/O related callbacks;
+
+**check:** Execute setImmediate() callbacks.
+
+**close callbacks:** Execute close callbacks, e.g. socket.on('close', ...).
+
+## Final diagram
+
+![Event Loop](./event_loop_2.png 'Event loop complete diagram')
+
+# Generators
+
+This is more like extra content, but generators also have a pretty good part inside Node.
+But first, let's see about Iterators.
+
+## Iterators
+
+An iterator is an object that produces a sequence of values and return a value on its end.
+
+### What is defined as an iterator
+
+An object to be defined as an iterator needs to implement a `next` method, which needs to return an object containing two properties:
+
+_Done:_ Defines if the sequence is finished or not
+
+_Value:_ Any value returned by the iterator
+
+An iterator object can be iterated by calling the next method. When all the values are iterated, the `done` property returns true.
+
+```js
+const iterator = [1, 2, 3][Symbol.iterator]();
+iterator.next(); // { value: 1, done: false }
+iterator.next(); // { value: 2, done: false }
+// ...
+iterator.next(); // { value: undefined, done: true }
+```
+
+## Creating an Iterator
+
+```js
+function makeRangeIterator(start = 0, end = Infinity) {
+  let nextIndex = start;
+  let iterationCount = 0;
+
+  const rangeIterator = {
+    next: function () {
+      let result;
+      if (nextIndex < end) {
+        result = { value: nextIndex, done: false };
+        nextIndex++;
+        iterationCount++;
+        return result;
+      }
+      return { value: iterationCount, done: false };
+    },
+  };
+  return rangeIterator;
+}
+```
+
+That'll seem like too much code, but it's pretty straightforward.
+The function implements and returns the `next` function, in which when you call it, it will increment the current index, and return the result, which it's the _value_ and _done_ object. When it's the final index, we just return the `done: true`. In this example, I used just the iteration count for the value.
+
+This implementation is considered an Iterator since it has all the requirements.
+
+## Now back to generators
+
+Generators are a type of function that can be executed, paused, and resumed in a controlled manner.
+There are two main things that generators are used for, implementing lazy iterators and blocking asynchronous calls.
+
+Here is the same function above, but implemented using generators.
+
+```js
+function* makeRangeIterator(start = 0, end = Infinity) {
+  let iterationCount = 0;
+
+  for (let i = start; i < end; i++) {
+    iterationCount++;
+    yield i;
+  }
+
+  return iterationCount;
+}
+```
+
+Very noticeable better. Generators have that special syntax that you need to add an `*` after the `function` keyword, this determines that this function is a generator.
+Besides that, the only other weird thing is the `yield` keyword. When the code is being executed, it will stop right when it reaches the `yield`, and the value after the `yield`, in this case, the `i`, is the value that will be returned in the `value` property from that iteration.
+
+```js
+const generator = makeRangeIterator();
+generator.next(); // { value: 0, done: false }
+generator.next(); // { value: 1, done: false }
+generator.next(); // { value: 2, done: false }
+// ...
+```
+
+_You can also inject a value by passing the value to the next function, like so, `generator.next('new value')`._
+
+# Async Await
+
+Have you ever wondered how this thing works? Me neither, but I will show you.
+
+Async Await is a way to pause the execution of a code on the `await` keyword, when used on a promise, and resume only when the promise is resolved.
+
+**So we need 3 things to make something like this work.**
+
+1. Pause a function
+2. Put a value inside the function
+3. Resume a function
+
+And that's exactly what generators allowed us to do!
+
+So, let's implement our own Async Await, why not.
+
+```js
+const wrapToReturnPromise = function (gen) {
+  const generator = gen();
+  const { value } = generator.next();
+
+  if (value.isPromise()) { // pseudo-code
+    return value
+      .then((val) => generator.next(val))
+      .catch((err) => generator.throw(err));
+  }
+
+  // Error if not promise
+};
+```
+
+Here we created a function that receives a generator function from its parameters, then we call the generator next method to get its initial value, after that we check if that value is a promise and we call `next` again inside the `then`, but this time injecting the value to it (`generator.next(val)`), which would cause it to be returned as `{value: val, done}` object.
+
+```js
+const fakeApi = function () {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      return resolve('Fake data');
+    }, 1000);
+  });
+};
+
+const foo = wrapToReturnPromise(function* () {
+  try {
+    const val = yield fakeApi();
+    console.log(val); // "Fake data"
+    return val;
+  } catch (err) {
+    console.log('Error: ', err.message);
+  }
+});
+```
+
+Here is the interesting part, we call the `wrapToReturnPromise`, passing in our generator function, which in this case just calls a function that returns a Promise and logs it, but we can see that it behaves exactly like an async await function, the `yield` will tell the runtime to stop there, just like the await, and after the promise is resolved, it resumes and logs the returned value!. Very cool (for me at least).
+
+And here's where I'm gonna end this post, I hope it was useful for you and you learned something. This stuff may be difficult to understand sometimes, but time will take care of it.
