@@ -1,20 +1,20 @@
 ---
-title: 'Making better decisions with the WADM'
+title: 'Finally understanding Node.js internals.'
 author: 'Patrick Passarella'
-date: '2021-01-07'
-subtitle: 'WADM is a formula to make mathematically better decisions based on factors that matter'
-cover: ./cover.jpg
-coverCredit: 'Piotr Makowski'
+date: '2021-04-30'
+subtitle: 'A straightforward post about some of the Node.js internals aspects, like V8, Event Loop, JIT, Libuv, and more bonus topics.'
+cover: ./cover_3.jpg
+coverCredit: '@tomadamsmia'
 coverWebsite: 'Unsplash'
-published: false
+published: true
 ---
 
 # Scope
 
 **First of all, what does _node internals_ means?**
-Node internals is the structure of Node, how does it works, why it works like that, what technologies are involved, things like that.
+Node internals is the structure of Node, how does it work, why it works like that, what technologies are involved, things like that.
 
-In this post, I will talk about some of the core technologies Node is composed, a more top-down perspective on how they work, and some additional info that may help you understand some more about Node.
+In this post, I will talk about some of the core technologies Node is composed, a more top-down perspective on how they work, and some additional info that may help you understand some more about it.
 
 **More specifically:**
 
@@ -26,7 +26,7 @@ In this post, I will talk about some of the core technologies Node is composed, 
 - Generators
 - Async Await
 
-This is not an advanced post, actually, it's the other way around, a post for you to finally understand the basics of how Node works.
+This is not an advanced post, actually, it's the other way around, a post for you to finally understand the basics of how Node works, because there's too much about it.
 
 # Why
 
@@ -142,11 +142,11 @@ Inside Libuv, there are a lot of concepts, like handles, who are abstractions to
 
 Also, some modules from Node comes from Libuv, like the `fs` and `child_process` module.
 
-## Async File I/O
+### Async File I/O
 
 When a task for something like a file I/O is put in the call stack, the event loop sends it to the Libuv thread pool, when the data is processed, it puts it in the **Task Queue**, for the event loop to call when it is available.
 
-## Network I/O
+### Network I/O
 
 The thread pool is bypassed completely when executing low-level OS operations, like a REST API call. Libuv nor node handle these. Instead, there’s something called OS Async Helpers, where the operations are executed immediately as soon as a CPU is available.
 
@@ -160,14 +160,14 @@ We can think about the event loop like someone who sends tasks to the right plac
 
 But in the middle of all that communication, it also manages a lot of other stuff, like timers, and other callbacks.
 
-![Event Loop](./event_loop_1.png 'Event loop')
-
 The event loop is what allows Node.js to perform non-blocking I/O operations, by offloading operations to the system kernel whenever possible. The event loop will go through a phase, execute the callbacks related to that phase, and then move to the next one. Each phase has a callback queue. Depending on the task, it will send it to the corresponding queue.
 
 When Node.js starts, it initializes the event loop, processes the script, then begins processing the event loop.
 The loop only stops when there are no more tasks queued in the event loop or in the call stack.
 
 ## Phases
+
+![Event Loop](./event_loop_stages.png 'Event loop')
 
 **timers:** Executes callbacks scheduled by setTimeout() and setInterval().
 
@@ -183,7 +183,25 @@ The loop only stops when there are no more tasks queued in the event loop or in 
 
 ## Final diagram
 
-![Event Loop](./event_loop_2.png 'Event loop complete diagram')
+![Event Loop Complete](./event_loop_complete.png 'Event loop complete diagram')
+
+### Quick recap
+
+Looking in that diagram, I will follow the readFile task.
+
+1. A read file task is placed on the call stack.
+2. The event loop sends it to Libuv background threads.
+3. While the threads are working, the event-loop single-thread can process another task since it's empty.
+4. After the Libuv threads are done processing the readFile callback, it sends it to the respective queue, in this case, the Task Queue.
+5. After the call stack is empty, the event-loop grabs the readFile callback from the Task Queue and place it on the call stack to be executed.
+
+Now, the API request example.
+
+1. An API request task is placed on the call stack.
+2. The event loop sends it to the OS to process.
+3. While the OS is working, the event-loop single-thread can process another task since it's empty.
+4. After the OS is done processing, it sends it to the respective queue, in this case, the Job Queue.
+5. After the call stack is empty, the event-loop grabs the API request callback from the Job Queue and place it on the call stack to be executed.
 
 # Generators
 
@@ -198,11 +216,11 @@ An iterator is an object that produces a sequence of values and return a value o
 
 An object to be defined as an iterator needs to implement a `next` method, which needs to return an object containing two properties:
 
-_Done:_ Defines if the sequence is finished or not
+**Done:** Defines if the sequence is finished or not
 
-_Value:_ Any value returned by the iterator
+**Value:** Any value returned by the iterator
 
-An iterator object can be iterated by calling the next method. When all the values are iterated, the `done` property returns true.
+An iterator object can be iterated by calling the `next` method. When all the values are iterated, the `done` property returns true.
 
 ```js
 const iterator = [1, 2, 3][Symbol.iterator]();
@@ -236,7 +254,7 @@ function makeRangeIterator(start = 0, end = Infinity) {
 ```
 
 That'll seem like too much code, but it's pretty straightforward.
-The function implements and returns the `next` function, in which when you call it, it will increment the current index, and return the result, which it's the _value_ and _done_ object. When it's the final index, we just return the `done: true`. In this example, I used just the iteration count for the value.
+The function implements and returns the `next` function, in which when you call it, it will increment the current index, and return the result, which it's the `value` and `done` object. When it's the final index, we just return the `done: true`. In this example, I used just the iteration count for the value.
 
 This implementation is considered an Iterator since it has all the requirements.
 
@@ -271,7 +289,7 @@ generator.next(); // { value: 2, done: false }
 // ...
 ```
 
-_You can also inject a value by passing the value to the next function, like so, `generator.next('new value')`._
+You can also inject a value by passing the value to the `next` function, like so, `generator.next('new value')`.
 
 # Async Await
 
@@ -304,7 +322,7 @@ const wrapToReturnPromise = function (gen) {
 };
 ```
 
-Here we created a function that receives a generator function from its parameters, then we call the generator next method to get its initial value, after that we check if that value is a promise and we call `next` again inside the `then`, but this time injecting the value to it (`generator.next(val)`), which would cause it to be returned as `{value: val, done}` object.
+Here we created a function that receives a generator function from its parameters, then we call the generator `next` method to get its initial value, after that, we check if that value is a promise and we call `next` again inside the `then`, but this time injecting the value to it (`generator.next(val)`), which would cause it to be returned as `{value: val, done}` object.
 
 ```js
 const fakeApi = function () {
