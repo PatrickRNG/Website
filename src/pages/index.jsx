@@ -142,34 +142,23 @@ const IndexPage = ({ location }) => {
           I'm Patrick Passarella, a full-stack web developer based in Brazil.
         </P>
         <P>
-          I’ve always been on the technology side since I was a kid, studying
-          pretty much anything related to that in the course of my life and
-          career, like game development, 3D modeling, animation, music, motion
-          design, and UI/UX, I consider myself as a fast learner, picking up new
-          skills with relative ease. Today my focus is mostly web-related.
+          I’ve always been on the technology side since I was a kid, studying pretty much anything related to that in the course of my life and career, like game development, 3D modeling, animation, music, and UI/UX. I consider myself a fast learner, picking up new skills fairly easily. Today my focus is mostly web development.
         </P>
         <P>
-          I’m always learning and I consider knowledge the most important thing
-          in my life, not only counting the technical side but as a person,
-          always growing with empathy and emotion as best as I can.
+          One of my many goals is to never stop learning. I try to improve myself not only on the technical side, but as a person too.
         </P>
         <P>
-          Inspiring others is one of my talents, as I’m easily inspired and I
-          try my best to keep learning with enthusiasm. My energy also takes me
-          to pursuit many other interests, hobbies, and areas of study, such as
-          economics, philosophy, math, fitness, and cooking.
+          I think that inspiring and helping others is one of my talents, as it's something I really love to do, and I'm also easily inspired. I try my best to keep learning with enthusiasm and help people. I also have many other interests and hobbies, such as video games, economics, philosophy, fitness, and cooking.
         </P>
         <P>
-          Currently, I work in a full-time job and am interested in
-          entrepreneurship, but also looking for some freelancing.
+          Currently, I work in a full-time job and am very interested in entrepreneurship.
         </P>
       </AboutSection>
       <Separator id="blog" />
       <BlogSection>
         <H1 as="h2">Blog</H1>
         <P style={{ marginBottom: '64px' }}>
-          Here I write about things that I like or know, such as web
-          development, career, life and self-improvement.
+          Here I write about things that I like or know, such as web development, career, life and self-improvement.
         </P>
         <BlogWrapper>
           {edges.slice(0, 4).map((edge) => (
@@ -193,8 +182,7 @@ const IndexPage = ({ location }) => {
           <div className="left">
             <H1>Newsletter</H1>
             <P>
-              Sign up to know when I post something new on my blog! Also for
-              more content and updates.
+              Sign up to know when I post something new on my blog! Also for more content and updates.
             </P>
             <Newsletter onSubmit={handleNewsletter}>
               <input
