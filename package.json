@@ -35,7 +35,7 @@
     "gatsby-remark-images": "^3.5.1",
     "gatsby-remark-relative-images": "^2.0.2",
     "gatsby-source-filesystem": "^2.5.0",
-    "gatsby-transformer-remark": "^2.10.0",
+    "gatsby-transformer-remark": "^5.25.1",
     "gatsby-transformer-sharp": "^2.6.0",
     "lodash": "^4.17.20",
     "prism-react-renderer": "^1.1.1",
