@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 import { device } from '../../utils/devices';
+import { motion } from 'framer-motion/dist/framer-motion';
 
-const PostWrapper = styled.div`
+const PostWrapper = motion(styled.div`
   margin-bottom: 35px;
   padding: 10px;
   transition: 150ms;
@@ -13,7 +14,7 @@ const PostWrapper = styled.div`
   @media ${device.mobileS} and (max-width: 425px) {
     width: 100%;
   }
-`;
+`);
 
 const Title = styled.h2`
   font-size: 1rem;

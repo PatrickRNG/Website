@@ -33,10 +33,7 @@ const Blog = ({ data, pageContext }) => {
     coverWebsite,
   } = frontmatter;
 
-  const formattedDate = format(
-    new Date(`${date} 00:00:00`),
-    'do MMM, y'
-  );
+  const formattedDate = format(new Date(`${date} 00:00:00`), 'do MMM, y');
 
   return (
     <Layout contentStyle={{ maxWidth: '1032px', padding: '0 1.5rem' }}>
@@ -70,15 +67,24 @@ const Blog = ({ data, pageContext }) => {
       <MDXRenderer>{body}</MDXRenderer>
       <Separator width="100%" />
       <EndText>
-        <b className="first">Thanks for reading!</b>Enjoyed the content or just
-        want to send me a message? Follow me on Twitter!
+        <b className="first">Thanks for reading!</b>Enjoyed the content and want
+        to read more? Subscribe to my newsletter!
       </EndText>
-      <TwitterCard
-        name="Patrick Passarella"
-        username={twitterUsername}
-        url={twitter}
-        image="https://pbs.twimg.com/profile_images/1313444737647554560/_6V8ahxX_400x400.jpg"
-      />
+
+      <iframe
+        src="https://embeds.beehiiv.com/a261739d-230a-40ce-a6ae-00cb9b16b219?slim=true"
+        data-test-id="beehiiv-embed"
+        height="52"
+        frameborder="0"
+        scrolling="no"
+        style={{
+          display: 'flex',
+          margin: '0 auto',
+          marginBottom: '32px',
+          borderRadius: '0px !important',
+          backgroundColor: 'transparent',
+        }}
+      ></iframe>
     </Layout>
   );
 };

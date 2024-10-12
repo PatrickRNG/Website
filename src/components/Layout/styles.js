@@ -7,12 +7,12 @@ const GlobalStyle = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
   html {
-    scroll-behavior: ${props => props.smooth ? 'smooth' : 'auto'};
+    scroll-behavior: ${(props) => (props.smooth ? 'smooth' : 'auto')};
   }
 
   body {
     font-size: 16px;
-    background-color: #1D1D1D;
+    background-color: #191919;
   }
 
   html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote,
@@ -32,7 +32,7 @@ const GlobalStyle = createGlobalStyle`
     border: 0;
     vertical-align: baseline;
     font-family: 'Lato', 'Open Sans', sans-serif;
-    color: #fff;
+    color: #E0E0E0;
     box-sizing: border-box;
     list-style: none;
     letter-spacing: 0.3px;

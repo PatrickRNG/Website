@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useStaticQuery, graphql } from 'gatsby';
 import { useMediaQuery } from 'react-responsive';
 import SEO from 'react-seo-component';
-import addToMailchimp from 'gatsby-plugin-mailchimp';
+import { motion } from 'framer-motion/dist/framer-motion';
 
 import Layout from '../components/Layout/Layout';
 import Post from '../components/Post/Post';
-import Object3D from '../components/object3D/object3D';
 import { useSiteMetadata } from '../hooks/useSiteMetadata';
+import { slideUp } from '../utils/animation';
 
 import {
   Roles,
@@ -24,10 +24,11 @@ import {
   SocialTitle,
   CenterDivisor,
   Separator,
-  HeadWrapper,
   MainHeader,
   MainSection,
-  Newsletter,
+  ImageCover,
+  CTAHeader,
+  SubHeader,
 } from '../styles/main';
 
 const IndexPage = ({ location }) => {
@@ -70,35 +71,7 @@ const IndexPage = ({ location }) => {
     }
   `);
 
-  const [email, setEmail] = useState('');
-  const [newsletterText, setNewsletterText] = useState('');
-
   const maxLaptop = useMediaQuery({ query: '(max-width: 1024px)' });
-  const maxTablet = useMediaQuery({ query: '(max-width: 768px)' });
-  const maxMobileL = useMediaQuery({ query: '(max-width: 425px)' });
-
-  const render3DHead = () => {
-    if (maxMobileL) return <Object3D fov={30} />;
-    if (maxTablet) return <Object3D fov={25} />;
-    return <Object3D fov={34} />;
-  };
-
-  const handleNewsletter = async (e) => {
-    e.preventDefault();
-    const { result, msg } = await addToMailchimp(email);
-    if (result === 'error') {
-      if (msg.includes('is already subscribed')) {
-        return setNewsletterText("You're already subscribed!");
-      }
-      return setNewsletterText('Some error ocurred, unable to subscribe');
-    }
-
-    setNewsletterText('Thank you for subscribing! Have a great day');
-  };
-
-  const handleChangeEmail = (e) => {
-    setEmail(e.target.value);
-  };
 
   const {
     title,
@@ -109,6 +82,20 @@ const IndexPage = ({ location }) => {
     siteLocale,
     twitterUsername,
   } = useSiteMetadata();
+
+  const AnimatedSection = ({ children, delay = 0.2 }) => {
+    return (
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={slideUp}
+        transition={{ delay }}
+      >
+        {children}
+      </motion.div>
+    );
+  };
 
   return (
     <Layout location={location}>
@@ -122,43 +109,82 @@ const IndexPage = ({ location }) => {
         twitterUsername={twitterUsername}
         titleTemplate={title}
       />
-      <MainSection>
-        <MainHeader>
-          <BoldHeader>
-            Hi,
-            <br />
-            I’m Patrick,
-            <br />
-            web developer.
-          </BoldHeader>
-          <Roles>Front End / Back End / Fullstack / UI &amp; UX</Roles>
-        </MainHeader>
-        <HeadWrapper>{render3DHead()}</HeadWrapper>
-      </MainSection>
+      <ImageCover />
+      <AnimatedSection>
+        <MainSection>
+          <MainHeader>
+            <motion.div variants={slideUp}>
+              <BoldHeader>
+                Hi,
+                <br />
+                I’m Patrick,
+                <br />
+                Software Enginner.
+              </BoldHeader>
+            </motion.div>
+            <motion.div variants={slideUp}>
+              <Roles>Fullstack / Tech Lead / UI &amp; UX</Roles>
+              <CTAHeader>
+                <SubHeader>Sign-up to my Newsletter!</SubHeader>
+                <P style={{ marginBottom: '32px' }}>
+                  To receive valuable content from an experienced developer
+                </P>
+                <iframe
+                  src="https://embeds.beehiiv.com/a261739d-230a-40ce-a6ae-00cb9b16b219?slim=true"
+                  data-test-id="beehiiv-embed"
+                  height="52"
+                  frameborder="0"
+                  scrolling="no"
+                  style={{
+                    margin: 0,
+                    borderRadius: '0px !important',
+                    backgroundColor: 'transparent',
+                  }}
+                />
+              </CTAHeader>
+            </motion.div>
+          </MainHeader>
+        </MainSection>
+      </AnimatedSection>
+
       <Separator id="about" />
-      <AboutSection>
-        <H1 as="h2">About me</H1>
-        <P>
-          I'm Patrick Passarella, a full-stack web developer based in Brazil.
-        </P>
-        <P>
-          I’ve always been on the technology side since I was a kid, studying pretty much anything related to that in the course of my life and career, like game development, 3D modeling, animation, music, and UI/UX. I consider myself a fast learner, picking up new skills fairly easily. Today my focus is mostly web development.
-        </P>
-        <P>
-          One of my many goals is to never stop learning. I try to improve myself not only on the technical side, but as a person too.
-        </P>
-        <P>
-          I think that inspiring and helping others is one of my talents, as it's something I really love to do, and I'm also easily inspired. I try my best to keep learning with enthusiasm and help people. I also have many other interests and hobbies, such as video games, economics, philosophy, fitness, and cooking.
-        </P>
-        <P>
-          Currently, I work in a full-time job and am very interested in entrepreneurship.
-        </P>
-      </AboutSection>
+      <AnimatedSection delay={0.3}>
+        <AboutSection>
+          <H1 as="h2">About me</H1>
+          <P>
+            I'm Patrick Passarella, a full-stack software engineer based in
+            Brazil, but living in Europe.
+          </P>
+          <P>
+            I’ve always been on the technology side since I was a kid, studying
+            pretty much anything related to that in the course of my life and
+            career, such as game development, 3D modeling, animation, and UI/UX.
+            I consider myself a fast learner and heavily motivated, picking up
+            new skills with ease. Today my focus is mentorship, content
+            creation, and building solutions.
+          </P>
+          <P>
+            One of my many goals is to never stop learning, and always be
+            outside my comfort zone. I try to improve myself not only on the
+            technical side, but as a person too.
+          </P>
+          <P>
+            Inspiring and helping others is one of my talents, as it's something
+            I really love and aspire to do. I also have many other interests and
+            hobbies, such as video games, economics, fitness, and cooking.
+          </P>
+          <P>
+            I'm always looking for new challenges and aspirations, feel free to
+            reach out to me at anytime.
+          </P>
+        </AboutSection>
+      </AnimatedSection>
       <Separator id="blog" />
       <BlogSection>
         <H1 as="h2">Blog</H1>
         <P style={{ marginBottom: '64px' }}>
-          Here I write about things that I like or know, such as web development, career, life and self-improvement.
+          Here I write about things that I like or know, such as web
+          development, career, life and self-improvement.
         </P>
         <BlogWrapper>
           {edges.slice(0, 4).map((edge) => (
@@ -177,69 +203,73 @@ const IndexPage = ({ location }) => {
         </Subtitle>
       </BlogSection>
       <Separator id="contact" />
-      <ContactSection>
-        <TwoWrapper>
-          <div className="left">
-            <H1>Newsletter</H1>
-            <P>
-              Sign up to know when I post something new on my blog! Also for more content and updates.
-            </P>
-            <Newsletter onSubmit={handleNewsletter}>
-              <input
-                type="email"
-                onChange={handleChangeEmail}
-                className="newsletter-input"
-                placeholder="Your E-mail here!"
+      <AnimatedSection>
+        <ContactSection>
+          <TwoWrapper>
+            <div className="left">
+              <H1>Newsletter</H1>
+              <P style={{ marginBottom: '64px' }}>
+                <b>I have a Newsletter!</b> Where I share more streamlined
+                content on tech, career advice, and personal growth. Subscribe
+                to receive my latest thoughts and insights ☕.
+              </P>
+              <iframe
+                src="https://embeds.beehiiv.com/a261739d-230a-40ce-a6ae-00cb9b16b219?slim=true"
+                data-test-id="beehiiv-embed"
+                height="52"
+                frameborder="0"
+                scrolling="no"
+                style={{
+                  margin: 0,
+                  borderRadius: '0px !important',
+                  backgroundColor: 'transparent',
+                }}
               />
-              <button type="submit" className="newsletter-button">
-                Subscribe
-              </button>
-            </Newsletter>
-            <P style={{ marginTop: '16px' }}>{newsletterText}</P>
-          </div>
-          <CenterDivisor />
-          {maxLaptop && <Separator id="social" />}
-          <div className="right">
-            <H1 as="h2">Social Media</H1>
-            <Flex>
-              <div>
-                <SocialTitle>Twitter</SocialTitle>
-                <Subtitle as="a" href={socialMedia.twitter} target="_blank">
-                  {socialMedia.twitter}
-                </Subtitle>
-              </div>
-              <div>
-                <SocialTitle>Linkedin</SocialTitle>
-                <Subtitle
-                  as="a"
-                  href={`${socialMedia.linkedin}?locale=en_US`}
-                  target="_blank"
-                >
-                  {socialMedia.linkedin}
-                </Subtitle>
-              </div>
-              <div>
-                <SocialTitle>Github</SocialTitle>
-                <Subtitle as="a" href={socialMedia.github} target="_blank">
-                  {socialMedia.github}
-                </Subtitle>
-              </div>
-              <div>
-                <SocialTitle>Instagram</SocialTitle>
-                <Subtitle as="a" href={socialMedia.instagram} target="_blank">
-                  {socialMedia.instagram}
-                </Subtitle>
-              </div>
-              <div>
-                <SocialTitle>E-mail</SocialTitle>
-                <Subtitle as="a" href={`mailto:${socialMedia.email}`}>
-                  {socialMedia.email}
-                </Subtitle>
-              </div>
-            </Flex>
-          </div>
-        </TwoWrapper>
-      </ContactSection>
+            </div>
+            <CenterDivisor />
+            {maxLaptop && <Separator id="social" />}
+            <div className="right">
+              <H1 as="h2">Social Media</H1>
+              <Flex>
+                <div>
+                  <SocialTitle>Twitter</SocialTitle>
+                  <Subtitle as="a" href={socialMedia.twitter} target="_blank">
+                    {socialMedia.twitter}
+                  </Subtitle>
+                </div>
+                <div>
+                  <SocialTitle>Linkedin</SocialTitle>
+                  <Subtitle
+                    as="a"
+                    href={`${socialMedia.linkedin}?locale=en_US`}
+                    target="_blank"
+                  >
+                    {socialMedia.linkedin}
+                  </Subtitle>
+                </div>
+                <div>
+                  <SocialTitle>Github</SocialTitle>
+                  <Subtitle as="a" href={socialMedia.github} target="_blank">
+                    {socialMedia.github}
+                  </Subtitle>
+                </div>
+                <div>
+                  <SocialTitle>Instagram</SocialTitle>
+                  <Subtitle as="a" href={socialMedia.instagram} target="_blank">
+                    {socialMedia.instagram}
+                  </Subtitle>
+                </div>
+                <div>
+                  <SocialTitle>E-mail</SocialTitle>
+                  <Subtitle as="a" href={`mailto:${socialMedia.email}`}>
+                    {socialMedia.email}
+                  </Subtitle>
+                </div>
+              </Flex>
+            </div>
+          </TwoWrapper>
+        </ContactSection>
+      </AnimatedSection>
     </Layout>
   );
 };

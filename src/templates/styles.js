@@ -7,7 +7,7 @@ export const Title = styled.h1`
 
 export const Subtitle = styled.p`
   margin: 6px 0;
-  color: #dadada;
+  color: #aaa;
   font-size: 1.1rem;
 `;
 

@@ -39,19 +39,21 @@ export const MainSection = styled(Section)`
   }
 `;
 
-export const HeadWrapper = styled.div`
-  width: 50%;
-
-  @media ${device.mobileS} and (max-width: 768px) {
-    width: 100%;
-    height: 50%;
-    pointer-events: none;
-  }
-
-  & canvas {
-    right: 0;
-    position: absolute;
-  }
+export const ImageCover = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  background-image: linear-gradient(
+      -90deg,
+      rgba(25, 25, 25, 0.95),
+      rgba(25, 25, 25, 1)
+    ),
+    url('./cover.jpg');
+  background-size: cover;
+  background-position: center;
 `;
 
 export const MainHeader = styled.div`
@@ -60,6 +62,10 @@ export const MainHeader = styled.div`
   @media ${device.mobileS} and (max-width: 425px) {
     width: 100%;
   }
+`;
+
+export const CTAHeader = styled.div`
+  margin-top: 64px;
 `;
 
 export const Separator = styled.div`
@@ -79,6 +85,12 @@ export const H1 = styled.h1`
     margin-top: ${HEADER_MARGIN_MOBILE}px;
     font-size: 2.85rem;
   }
+`;
+
+export const SubHeader = styled.h2`
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 8px;
 `;
 
 export const Subtitle = styled(Link)`
@@ -196,38 +208,6 @@ export const Flex = styled.div`
 
     & > div:nth-child(odd) {
       width: 50%;
-    }
-  }
-`;
-
-export const Newsletter = styled.form`
-  margin-top: 64px;
-  & .newsletter {
-    &-input {
-      border: none;
-      background: #3a3a3a;
-      color: #fff;
-      padding: 12px;
-      outline: none;
-      width: 220px;
-
-      &::placeholder {
-        color: #969696;
-      }
-    }
-
-    &-button {
-      padding: 12px;
-      border: none;
-      cursor: pointer;
-      background-color: #e4e4e4;
-      color: #1d1d1d;
-      transition: .15s;
-      outline: none;
-
-      &:hover {
-        opacity: .9;
-      }
     }
   }
 `;
