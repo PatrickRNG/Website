@@ -50,3 +50,19 @@ module.exports.createPages = async ({ graphql, actions }) => {
     });
   });
 };
+
+exports.onCreateWebpackConfig = ({ actions, loaders }) => {
+  actions.setWebpackConfig({
+    module: {
+      rules: [
+        {
+          test: /\.m?js$/,
+          exclude: /node_modules\/(?!three-mesh-bvh|@mediapipe|@react-spring\/core|@react-spring\/shared)/, // Transpile these specific packages
+          use: [
+            loaders.js(), // This uses Babel to transpile
+          ],
+        },
+      ],
+    },
+  });
+};

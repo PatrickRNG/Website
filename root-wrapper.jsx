@@ -53,7 +53,7 @@ const components = {
   h2: ({ children }) => <h2 id={createLocalLink(children)} style={{ fontSize: '2rem', margin: '1.25rem 0 1.1rem 0' }}>{children}</h2>,
   h3: ({ children }) => <h3 id={createLocalLink(children)} style={{ fontSize: '1.5rem', marginBottom: '1.1rem' }}>{children}</h3>,
   p: ({ children }) => <p style={{marginBottom: '2.5rem', fontSize: '1.3rem', lineHeight: '30px', fontFamily: 'PT Serif, serif'}}>{children}</p>,
-  img: (props) => <img {...props} />,
+  img: (props) => <img {...props} alt={props.alt} />,
   ol: ({ children }) => <OrderedList>{children}</OrderedList>,
   ul: ({ children }) => <List>{children}</List>,
   strong: ({ children }) => <b style={{fontWeight: '600', fontFamily: 'PT Serif, serif'}}>{children}</b>,

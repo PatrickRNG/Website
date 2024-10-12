@@ -1,7 +1,7 @@
 /* eslint-disable */
 import * as THREE from 'three';
 import React, { Suspense, useRef } from 'react';
-import { Canvas, useFrame, useThree, extend } from 'react-three-fiber';
+import { Canvas, useFrame, useThree, extend } from '@react-three/fiber';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Model from '../../model/model';
 
@@ -24,12 +24,10 @@ const CameraControls = () => {
       maxPolarAngle={Math.PI}
       minAzimuthAngle={-Math.PI / 4}
       minPolarAngle={0}
-      args={[camera, domElement]}
     />
   );
 };
-
-function Object3D({fov = 30}) {
+function Object3D({ fov = 30 }) {
   return (
     <Canvas
       concurrent
